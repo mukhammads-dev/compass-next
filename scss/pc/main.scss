@@ -2,6 +2,9 @@
 @import '../variables.scss';
 @import './general.scss';
 
+// shared components
+@import './common/cards.scss';
+
 @import './homepage/homepage.scss';
 
 @import './account/join.scss';
