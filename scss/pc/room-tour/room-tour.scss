@@ -1,0 +1,223 @@
+/* ---------- tagged image (pins) ---------- */
+.tagged-image {
+	gap: 8px;
+	.stage {
+		position: relative;
+		border-radius: 16px;
+		overflow: hidden;
+		background: $white;
+		user-select: none;
+		> img {
+			width: 100%;
+			max-height: 640px;
+			object-fit: cover;
+		}
+	}
+	&.editable .stage {
+		cursor: crosshair;
+	}
+	.pin {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		z-index: 2;
+		&.open {
+			z-index: 3;
+		}
+	}
+	.pin-dot {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		border: 3px solid $white;
+		background: $oak;
+		color: $white;
+		font-weight: 700;
+		font-size: 16px;
+		line-height: 1;
+		box-shadow: 0 0 0 6px rgba(208, 138, 69, 0.28), 0 2px 8px rgba(0, 0, 0, 0.25);
+		transition: transform 0.15s;
+		&:hover {
+			transform: scale(1.12);
+		}
+	}
+	.pin-card {
+		position: absolute;
+		top: 40px;
+		left: -12px;
+		width: 240px;
+		padding: 10px;
+		border-radius: $radius;
+		background: $white;
+		box-shadow: $shadow;
+		&.left {
+			left: auto;
+			right: -12px;
+		}
+		a {
+			display: flex;
+			gap: 10px;
+			img {
+				width: 56px;
+				height: 56px;
+				border-radius: $radius-sm;
+				object-fit: cover;
+			}
+			span {
+				display: flex;
+				flex-direction: column;
+				min-width: 0;
+				font-size: 13px;
+			}
+			em {
+				font-style: normal;
+				color: $muted;
+				font-size: 11px;
+			}
+			strong {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-weight: 500;
+			}
+			b {
+				font-family: $font-display;
+			}
+		}
+		.pin-missing {
+			font-size: 13px;
+			color: $muted;
+		}
+		.pin-remove {
+			position: absolute;
+			top: -10px;
+			right: -10px;
+			background: $white;
+			box-shadow: $shadow;
+		}
+	}
+	.nav {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: rgba(255, 255, 255, 0.85);
+		&.prev {
+			left: 12px;
+		}
+		&.next {
+			right: 12px;
+		}
+		&:hover {
+			background: $white;
+		}
+	}
+	.counter {
+		position: absolute;
+		bottom: 12px;
+		right: 12px;
+		padding: 2px 10px;
+		border-radius: 999px;
+		background: rgba(27, 31, 29, 0.7);
+		color: $white;
+		font-size: 12px;
+	}
+	.edit-hint {
+		font-size: 13px;
+		color: $muted;
+	}
+}
+
+.room-tour-filter {
+	gap: 10px;
+	width: 100%;
+	.MuiTextField-root {
+		max-width: 360px;
+		background: $white;
+	}
+}
+
+#room-tour-list-page .list-toolbar span {
+	color: $muted;
+	strong {
+		color: $ink;
+	}
+}
+
+#room-tour-detail-page {
+	.detail-layout {
+		flex-direction: row;
+		gap: 36px;
+		align-items: flex-start;
+		@include tablet {
+			flex-direction: column;
+		}
+	}
+	.detail-main {
+		flex: 1;
+		min-width: 0;
+		gap: 20px;
+		width: 100%;
+	}
+	.article-head {
+		gap: 8px;
+		h1 {
+			font-size: 30px;
+		}
+	}
+	.article-content {
+		white-space: pre-wrap;
+		font-size: 16px;
+		line-height: 1.75;
+	}
+	.detail-side {
+		width: 320px;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		position: sticky;
+		top: 88px;
+		@include tablet {
+			width: 100%;
+			position: static;
+		}
+		.author-card {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 14px;
+			border-radius: $radius;
+			background: $white;
+			border: 1px solid $line;
+			span {
+				font-size: 13px;
+				color: $muted;
+			}
+		}
+		.tagged-list {
+			gap: 14px;
+			h3 {
+				font-size: 17px;
+				span {
+					color: $oak;
+				}
+			}
+			.product-card {
+				flex-direction: row;
+				gap: 12px;
+				.thumb {
+					width: 76px;
+					flex-shrink: 0;
+				}
+				.info {
+					padding-top: 0;
+					flex: 1;
+					min-width: 0;
+				}
+			}
+		}
+	}
+}
+
+#room-tour-detail-page .tagged-list .like-chip {
+	display: none;
+}
