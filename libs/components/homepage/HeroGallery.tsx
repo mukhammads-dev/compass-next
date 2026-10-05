@@ -1,0 +1,124 @@
+import Link from 'next/link';
+import { useState } from 'react';
+import { useQuery } from '@apollo/client';
+import { useTranslation } from 'next-i18next';
+import { Stack } from '@mui/material';
+import { GET_BOARD_ARTICLES } from '../../../apollo/user/query';
+import { BoardArticle } from '../../types/board-article/board-article';
+import { BoardArticlesInquiry } from '../../types/board-article/board-article.input';
+import { BoardArticleCategory } from '../../enums/board-article.enum';
+import { Direction } from '../../enums/common.enum';
+import { STOCK_ROOMS, imageUrl, unsplash } from '../../config';
+import { enumLabel } from '../../utils';
+import { T } from '../../types/common';
+import HeaderFilter from './HeaderFilter';
+
+interface Slide {
+	key: string;
+	image: string;
+	href: { pathname: string; query?: Record<string, string> };
+	caption: string;
+	meta: string;
+	pin?: { x: number; y: number; label: string };
+}
+
+const GALLERY_SIZE = 10;
+
+const initialInput: BoardArticlesInquiry = {
+	page: 1,
+	limit: GALLERY_SIZE,
+	sort: 'articleRank',
+	direction: Direction.DESC,
+	search: { articleCategory: BoardArticleCategory.ROOM_TOUR },
+};
+
+/**
+ * Home hero (Nestar idea, Compass content): an endless strip of real homes.
+ * Real Room Tours come first; stock interiors fill the strip until there are enough.
+ */
+const HeroGallery = () => {
+	const { t } = useTranslation('common');
+	const [roomTours, setRoomTours] = useState<BoardArticle[]>([]);
+
+	/** APOLLO REQUESTS **/
+	useQuery(GET_BOARD_ARTICLES, {
+		fetchPolicy: 'cache-and-network',
+		variables: { input: initialInput },
+		onCompleted: (data: T) => setRoomTours(data?.getBoardArticles?.list ?? []),
+	});
+
+	const realSlides: Slide[] = roomTours
+		.filter((article) => article.roomImages?.length)
+		.map((article) => {
+			const tag = article.taggedProducts?.find((item) => item.imageIndex === 0);
+			return {
+				key: article._id,
+				image: imageUrl(article.roomImages[0], ''),
+				href: { pathname: '/room-tour/detail', query: { id: article._id } },
+				caption: article.articleTitle,
+				meta: [article.homeType && t(enumLabel(article.homeType)), article.homeSize && `${article.homeSize}㎡`]
+					.filter(Boolean)
+					.join(' · '),
+				pin: tag ? { x: tag.x, y: tag.y, label: `${article.taggedProducts.length} ${t('products')}` } : undefined,
+			};
+		});
+
+	const stockSlides: Slide[] = STOCK_ROOMS.map((room) => ({
+		key: room.id,
+		image: unsplash(room.id, 640),
+		href: { pathname: '/room-tour' },
+		caption: t(room.caption),
+		meta: `${t(enumLabel(room.homeType))} · ${room.homeSize}㎡`,
+		pin: { ...room.pin, label: t(room.pin.label) },
+	}));
+
+	const slides = [...realSlides, ...stockSlides].slice(0, Math.max(GALLERY_SIZE, realSlides.length));
+
+	const renderSlide = (slide: Slide, index: number, copy: string) => (
+		<Link
+			key={`${copy}-${slide.key}-${index}`}
+			href={slide.href}
+			className={`slide ${index % 2 ? 'low' : ''}`}
+			// the second copy only exists to make the loop seamless
+			aria-hidden={copy === 'b'}
+			tabIndex={copy === 'b' ? -1 : undefined}
+		>
+			<img src={slide.image} alt={slide.caption} loading={index < 5 ? 'eager' : 'lazy'} />
+			{slide.pin && (
+				<span className={'pin'} style={{ left: `${slide.pin.x}%`, top: `${slide.pin.y}%` }}>
+					<i />
+					<em>{slide.pin.label}</em>
+				</span>
+			)}
+			<span className={'caption'}>
+				<strong>{slide.caption}</strong>
+				<small>{slide.meta}</small>
+			</span>
+		</Link>
+	);
+
+	return (
+		<Stack className={'header-main'}>
+			<Stack className={'container hero-head'}>
+				<span className={'eyebrow'}>{t('Room Tour · 집들이')}</span>
+				<h1>
+					{t('Real homes.')} <em>{t('Tap anything')}</em> {t('to shop it.')}
+				</h1>
+				<p>{t('Browse rooms people actually live in, check what fits your space, and buy new or used — in one place.')}</p>
+			</Stack>
+
+			<div className={'hero-gallery'}>
+				<div className={'track'}>
+					{slides.map((slide, index) => renderSlide(slide, index, 'a'))}
+					{slides.map((slide, index) => renderSlide(slide, index, 'b'))}
+				</div>
+			</div>
+
+			<Stack className={'container hero-filter'}>
+				<HeaderFilter />
+			</Stack>
+		</Stack>
+	);
+};
+
+export default HeroGallery;
