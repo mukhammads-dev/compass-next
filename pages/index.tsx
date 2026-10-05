@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Stack } from '@mui/material';
 import withLayoutHome from '../libs/components/layout/LayoutHome';
+import CategoryCircles from '../libs/components/homepage/CategoryCircles';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -9,7 +10,9 @@ export const getStaticProps = async ({ locale }: any) => ({
 
 const Home: NextPage = () => {
 	return (
-		<Stack id={'home-page'} />
+		<Stack id={'home-page'}>
+			<CategoryCircles />
+		</Stack>
 	);
 };
 
