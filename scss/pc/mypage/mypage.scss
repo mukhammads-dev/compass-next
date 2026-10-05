@@ -1,0 +1,319 @@
+#my-page {
+	.my-layout {
+		flex-direction: row;
+		gap: 32px;
+		align-items: flex-start;
+		aside {
+			width: 240px;
+			flex-shrink: 0;
+			position: sticky;
+			top: 88px;
+		}
+		@include tablet {
+			flex-direction: column;
+			aside {
+				width: 100%;
+				position: static;
+			}
+		}
+	}
+	.my-content {
+		flex: 1;
+		min-width: 0;
+		width: 100%;
+	}
+}
+
+.my-menu {
+	gap: 18px;
+	padding: 18px;
+	background: $white;
+	border: 1px solid $line;
+	border-radius: $radius;
+	.my-card {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-bottom: 16px;
+		border-bottom: 1px solid $line;
+		span {
+			font-size: 12px;
+			color: $muted;
+		}
+	}
+	.menu-group {
+		gap: 2px;
+		.group-title {
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: $muted;
+			margin-bottom: 4px;
+		}
+		a {
+			padding: 7px 10px;
+			border-radius: $radius-sm;
+			font-size: 14px;
+			&:hover {
+				background: $paper;
+			}
+			&.active {
+				background: $soft;
+				color: $ink;
+				font-weight: 600;
+			}
+		}
+	}
+	@include tablet {
+		flex-direction: row !important;
+		flex-wrap: wrap;
+		.my-card {
+			width: 100%;
+		}
+		.menu-group {
+			min-width: 140px;
+		}
+	}
+}
+
+.my-section {
+	gap: 18px;
+	padding: 24px;
+	background: $white;
+	border: 1px solid $line;
+	border-radius: $radius;
+	@include mobile {
+		padding: 16px;
+	}
+	h2 {
+		font-size: 22px;
+	}
+	.section-title {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.MuiPagination-root {
+		align-self: center;
+	}
+}
+
+.profile-form,
+.product-form,
+.article-form,
+.room-form,
+.notice-form {
+	gap: 18px;
+}
+
+.room-form {
+	padding: 18px;
+	border-radius: $radius;
+	background: $paper;
+	> strong {
+		font-size: 14px;
+		margin-bottom: -8px;
+	}
+}
+
+.avatar-upload {
+	flex-direction: row !important;
+	align-items: center;
+	gap: 18px;
+}
+
+.listing-table {
+	border: 1px solid $line;
+	border-radius: $radius;
+	overflow: hidden;
+	.listing-row {
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 14px;
+		border-bottom: 1px solid $line;
+		&:last-child {
+			border-bottom: 0;
+		}
+		@include mobile {
+			flex-direction: column;
+			align-items: stretch;
+		}
+	}
+	.listing-main {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		img {
+			width: 64px;
+			height: 64px;
+			border-radius: $radius-sm;
+			object-fit: cover;
+			flex-shrink: 0;
+		}
+		strong {
+			display: block;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
+	.listing-actions {
+		flex-direction: row;
+		gap: 6px;
+	}
+	.category-chip {
+		align-self: flex-start;
+		font-size: 11px;
+		font-weight: 700;
+		color: $ink;
+	}
+}
+
+.room-card {
+	gap: 12px;
+	padding: 18px;
+	border: 1px solid $line;
+	border-radius: $radius;
+	.room-head {
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+		svg {
+			color: $ink;
+		}
+		span {
+			font-size: 12px;
+			color: $muted;
+		}
+	}
+	dl {
+		display: grid;
+		grid-template-columns: 70px 1fr;
+		gap: 4px 10px;
+		font-size: 14px;
+		dt {
+			color: $muted;
+		}
+	}
+	.room-actions {
+		flex-direction: row;
+		gap: 6px;
+		flex-wrap: wrap;
+	}
+}
+
+.tag-editor {
+	.product-picker {
+		gap: 10px;
+		padding: 14px;
+		border-radius: $radius;
+		border: 1px solid $oak;
+		background: $oak-soft;
+		.picker-head {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.picker-search {
+			flex-direction: row;
+			gap: 8px;
+			.MuiTextField-root {
+				background: $white;
+			}
+		}
+		.picker-results {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 8px;
+			@include mobile {
+				grid-template-columns: minmax(0, 1fr);
+			}
+			button {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 8px;
+				border: 1px solid $line;
+				border-radius: $radius-sm;
+				background: $white;
+				text-align: left;
+				&:hover {
+					border-color: $ink;
+				}
+				img {
+					width: 44px;
+					height: 44px;
+					border-radius: 6px;
+					object-fit: cover;
+				}
+				span {
+					display: flex;
+					flex-direction: column;
+					min-width: 0;
+					font-size: 13px;
+				}
+				strong {
+					font-weight: 500;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+				em {
+					font-style: normal;
+					color: $muted;
+				}
+			}
+		}
+	}
+}
+
+.follow-list {
+	.follow-row {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 0;
+		border-bottom: 1px solid $line;
+		a {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+	}
+}
+
+.notification-list {
+	.notification-row {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px;
+		border: 0;
+		border-bottom: 1px solid $line;
+		background: none;
+		text-align: left;
+		font-size: 14px;
+		color: $ink;
+		&:hover {
+			background: $paper;
+		}
+		&.unread {
+			background: $soft;
+		}
+		.text {
+			flex: 1;
+			em {
+				display: block;
+				font-style: normal;
+				color: $muted;
+				font-size: 13px;
+			}
+		}
+	}
+}
