@@ -1,0 +1,53 @@
+#member-page {
+	margin-top: -24px;
+	.profile-cover {
+		background: $white;
+		border-bottom: 1px solid $line;
+		margin-bottom: 24px;
+		> .container {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 24px;
+			padding-top: 36px;
+			padding-bottom: 28px;
+			@include mobile {
+				flex-direction: column;
+			}
+		}
+	}
+	.profile-info {
+		flex: 1;
+		gap: 4px;
+		.role {
+			align-self: flex-start;
+			padding: 2px 10px;
+			border-radius: 999px;
+			background: $soft;
+			color: $ink;
+			font-size: 12px;
+			font-weight: 600;
+		}
+		h1 {
+			font-size: 28px;
+		}
+		p {
+			margin-top: 6px;
+			max-width: 640px;
+		}
+	}
+	.profile-stats {
+		flex-direction: row;
+		gap: 18px;
+		margin-top: 10px;
+		font-size: 14px;
+		color: $muted;
+		flex-wrap: wrap;
+		strong {
+			color: $ink;
+		}
+	}
+	.profile-tabs {
+		margin-bottom: 20px;
+		border-bottom: 1px solid $line;
+	}
+}

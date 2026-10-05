@@ -1,0 +1,50 @@
+.comment-section {
+	gap: 16px;
+	margin-top: 40px;
+	padding-top: 32px;
+	border-top: 1px solid $line;
+	h3 {
+		font-size: 20px;
+		span {
+			color: $ink;
+		}
+	}
+	.comment-form {
+		flex-direction: row;
+		gap: 12px;
+		align-items: flex-end;
+		button {
+			flex-shrink: 0;
+		}
+	}
+	.comment-list {
+		gap: 18px;
+	}
+	.comment-item {
+		flex-direction: row;
+		gap: 12px;
+	}
+	.comment-body {
+		flex: 1;
+		gap: 2px;
+		p {
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+	}
+	.comment-head {
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+		strong {
+			font-size: 14px;
+		}
+		span {
+			font-size: 12px;
+			color: $muted;
+		}
+		.text-btn {
+			margin-left: auto;
+		}
+	}
+}

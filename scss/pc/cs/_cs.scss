@@ -1,0 +1,27 @@
+#cs-page {
+	.container {
+		gap: 20px;
+	}
+	.notice-list {
+		border: 1px solid $line;
+		border-radius: $radius;
+		overflow: hidden;
+		background: $white;
+		.MuiAccordion-root {
+			border-bottom: 1px solid $line;
+			&::before {
+				display: none;
+			}
+			&:last-child {
+				border-bottom: 0;
+			}
+		}
+	}
+	.notice-head {
+		gap: 2px;
+	}
+	.notice-content {
+		white-space: pre-wrap;
+		color: $ink;
+	}
+}

@@ -1,0 +1,131 @@
+.admin-loading {
+	min-height: 100vh;
+	align-items: center;
+	justify-content: center;
+}
+
+#admin-wrap {
+	display: flex;
+	min-height: 100vh;
+	background: $paper;
+	.admin-menu {
+		width: 240px;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 20px 14px;
+		background: $ink-dark;
+		color: $white;
+		.logo img {
+			height: 28px;
+			width: auto;
+			filter: brightness(0) invert(1);
+		}
+		.admin-badge {
+			align-self: flex-start;
+			padding: 2px 8px;
+			border-radius: 6px;
+			background: $oak;
+			font-size: 11px;
+			font-weight: 700;
+		}
+		nav {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			margin-top: 12px;
+			a {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 12px;
+				border-radius: $radius-sm;
+				color: rgba(255, 255, 255, 0.75);
+				font-size: 14px;
+				&:hover {
+					background: rgba(255, 255, 255, 0.08);
+				}
+				&.active {
+					background: rgba(255, 255, 255, 0.14);
+					color: $white;
+					font-weight: 600;
+				}
+			}
+		}
+	}
+	.admin-body {
+		flex: 1;
+		min-width: 0;
+	}
+	.admin-appbar {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		height: 60px;
+		padding: 0 24px;
+		background: $white;
+		border-bottom: 1px solid $line;
+		strong {
+			font-family: $font-display;
+			font-size: 20px;
+		}
+		.admin-user {
+			flex-direction: row;
+			align-items: center;
+			gap: 10px;
+			font-size: 14px;
+		}
+	}
+	.admin-content {
+		padding: 24px;
+	}
+}
+
+.admin-page {
+	gap: 16px;
+	padding: 20px;
+	background: $white;
+	border: 1px solid $line;
+	border-radius: $radius;
+	.admin-toolbar {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		flex-wrap: wrap;
+		.toolbar-right {
+			flex-direction: row;
+			align-items: center;
+			gap: 12px;
+		}
+	}
+	.notice-form {
+		padding: 16px;
+		border-radius: $radius;
+		background: $paper;
+	}
+}
+
+.admin-table {
+	th {
+		font-weight: 600;
+		color: $muted;
+		white-space: nowrap;
+	}
+	.cell-member,
+	.cell-product {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		&:hover {
+			color: $ink;
+		}
+	}
+	.cell-product img {
+		width: 36px;
+		height: 36px;
+		border-radius: 6px;
+		object-fit: cover;
+	}
+}

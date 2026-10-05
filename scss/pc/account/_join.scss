@@ -1,0 +1,55 @@
+#join-page {
+	.join-card {
+		max-width: 440px;
+		width: 100%;
+		margin: 0 auto;
+		padding: 28px;
+		gap: 20px;
+		background: $white;
+		border: 1px solid $line;
+		border-radius: 16px;
+		box-shadow: $shadow;
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+		}
+	}
+	.join-tabs {
+		flex-direction: row;
+		border-bottom: 1px solid $line;
+		button {
+			flex: 1;
+			padding: 12px 0;
+			border: 0;
+			border-bottom: 2px solid transparent;
+			background: none;
+			font-size: 16px;
+			font-weight: 600;
+			color: $muted;
+			&.active {
+				color: $ink;
+				border-color: $ink;
+			}
+		}
+	}
+	.type-select {
+		gap: 8px;
+		span {
+			font-size: 13px;
+			color: $muted;
+		}
+	}
+	.switch-text {
+		text-align: center;
+		font-size: 14px;
+		color: $muted;
+		button {
+			border: 0;
+			background: none;
+			color: $ink;
+			font-weight: 600;
+			padding: 0;
+		}
+	}
+}

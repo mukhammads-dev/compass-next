@@ -1,0 +1,42 @@
+{
+	"name": "compass-next",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev -p 3000",
+		"build": "next build",
+		"start": "next start -p 3000",
+		"lint": "next lint",
+		"format": "prettier --write \"**/*.{ts,tsx,scss}\""
+	},
+	"dependencies": {
+		"@apollo/client": "~3.13.9",
+		"@emotion/react": "^11.13.3",
+		"@emotion/styled": "^11.13.0",
+		"@mui/icons-material": "^5.16.7",
+		"@mui/material": "^5.16.7",
+		"axios": "^1.7.7",
+		"graphql": "^16.9.0",
+		"i18next": "^23.15.2",
+		"jwt-decode": "^4.0.0",
+		"moment": "^2.30.1",
+		"next": "14.2.15",
+		"next-i18next": "^15.3.1",
+		"numeral": "^2.0.6",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"react-i18next": "^14.1.3",
+		"sass": "^1.79.4",
+		"sweetalert2": "^11.14.1"
+	},
+	"devDependencies": {
+		"@types/node": "20.16.10",
+		"@types/numeral": "^2.0.5",
+		"@types/react": "18.2.79",
+		"@types/react-dom": "18.2.25",
+		"eslint": "8.57.1",
+		"eslint-config-next": "14.2.15",
+		"prettier": "^3.3.3",
+		"typescript": "5.6.2"
+	}
+}
