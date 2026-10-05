@@ -1,0 +1,114 @@
+/* Store list page */
+#store-list-page {
+	.store-toolbar {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 24px;
+		padding: 20px 24px;
+		margin-bottom: 28px;
+		border: 1px solid $line;
+		border-radius: $radius-lg;
+		background: $white;
+		box-shadow: 0 1px 2px rgba(20, 20, 20, 0.03);
+		@include tablet {
+			grid-template-columns: minmax(0, 1fr) auto;
+			.toolbar-search {
+				grid-column: 1 / -1;
+				grid-row: 2;
+			}
+		}
+		@include mobile {
+			grid-template-columns: minmax(0, 1fr);
+			padding: 16px;
+			gap: 14px;
+		}
+	}
+	.toolbar-title {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		.eyebrow {
+			font-size: 12px;
+			font-weight: 800;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: $oak;
+		}
+		strong {
+			font-size: 20px;
+			font-weight: 800;
+			letter-spacing: -0.02em;
+			white-space: nowrap;
+		}
+	}
+	.toolbar-search {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		height: 52px;
+		padding: 0 6px 0 18px;
+		border: 1px solid $line;
+		border-radius: 999px;
+		background: $soft;
+		transition:
+			border-color 0.2s ease,
+			background 0.2s ease;
+		max-width: 560px;
+		width: 100%;
+		justify-self: center;
+		&:focus-within {
+			border-color: $ink;
+			background: $white;
+		}
+		> svg {
+			color: $muted;
+		}
+		input {
+			flex: 1;
+			min-width: 0;
+			border: 0;
+			outline: 0;
+			background: transparent;
+			font: inherit;
+			font-size: 15px;
+			color: $ink;
+		}
+		button {
+			height: 40px;
+			padding: 0 20px;
+			border: 0;
+			border-radius: 999px;
+			background: $ink;
+			color: $white;
+			font: inherit;
+			font-weight: 700;
+			cursor: pointer;
+			transition: background 0.2s ease;
+			&:hover {
+				background: $oak;
+			}
+		}
+	}
+	.toolbar-sort {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		span {
+			font-size: 14px;
+			color: $muted;
+			white-space: nowrap;
+		}
+		.MuiOutlinedInput-root {
+			border-radius: 999px;
+			font-weight: 700;
+			background: $white;
+		}
+	}
+}
+
+@include mobile {
+	.grid.store-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
