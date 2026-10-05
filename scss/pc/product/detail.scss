@@ -1,0 +1,177 @@
+#product-detail-page {
+	.detail-top {
+		flex-direction: row;
+		gap: 48px;
+		align-items: flex-start;
+		@include tablet {
+			flex-direction: column;
+			gap: 28px;
+		}
+	}
+	.gallery {
+		flex: 1.1;
+		min-width: 0;
+		gap: 12px;
+		width: 100%;
+		.main-image {
+			position: relative;
+			border-radius: 16px;
+			overflow: hidden;
+			background: $white;
+			border: 1px solid $line;
+			img {
+				width: 100%;
+				aspect-ratio: 1 / 1;
+				object-fit: cover;
+			}
+		}
+		.thumbs {
+			flex-direction: row;
+			gap: 8px;
+			overflow-x: auto;
+			button {
+				flex-shrink: 0;
+				padding: 0;
+				border: 2px solid transparent;
+				border-radius: $radius-sm;
+				overflow: hidden;
+				background: none;
+				&.active {
+					border-color: $ink;
+				}
+				img {
+					width: 72px;
+					height: 72px;
+					object-fit: cover;
+				}
+			}
+		}
+	}
+	.summary {
+		flex: 1;
+		gap: 16px;
+		width: 100%;
+		h1 {
+			font-size: 30px;
+		}
+		.price {
+			flex-direction: row;
+			align-items: baseline;
+			gap: 10px;
+			.discount {
+				color: $sale;
+				font-weight: 700;
+				font-size: 20px;
+			}
+			del {
+				color: $muted;
+			}
+			strong {
+				font-family: $font-display;
+				font-size: 30px;
+			}
+		}
+		.spec {
+			display: grid;
+			grid-template-columns: 96px 1fr;
+			gap: 8px 12px;
+			padding: 16px 0;
+			border-top: 1px solid $line;
+			border-bottom: 1px solid $line;
+			font-size: 14px;
+			dt {
+				color: $muted;
+			}
+		}
+		.actions {
+			flex-direction: row;
+			gap: 10px;
+			flex-wrap: wrap;
+			> button:last-child,
+			> a:last-child {
+				flex: 1;
+			}
+		}
+		.seller {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 14px;
+			border-radius: $radius;
+			background: $white;
+			border: 1px solid $line;
+			span {
+				font-size: 13px;
+				color: $muted;
+			}
+		}
+	}
+	.fit-check {
+		gap: 10px;
+		padding: 16px;
+		border-radius: $radius;
+		background: $soft;
+		> strong {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			color: $ink;
+		}
+		p {
+			font-size: 14px;
+			a {
+				color: $ink;
+				font-weight: 600;
+				text-decoration: underline;
+			}
+		}
+		.fit-row {
+			flex-direction: row;
+			gap: 8px;
+			.MuiSelect-select {
+				background: $white;
+			}
+			> div:first-child {
+				flex: 1;
+			}
+		}
+		.fit-result {
+			gap: 6px;
+			padding: 12px;
+			border-radius: $radius-sm;
+			background: $white;
+			font-size: 14px;
+			span {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-weight: 500;
+			}
+			em {
+				font-style: normal;
+				color: $muted;
+				font-size: 13px;
+			}
+			&.ok span {
+				color: $ink;
+			}
+			&.warn span {
+				color: $sale;
+			}
+		}
+	}
+	.detail-section {
+		gap: 16px;
+		margin-top: 48px;
+		h3 {
+			font-size: 20px;
+			span {
+				color: $ink;
+			}
+		}
+		.desc {
+			white-space: pre-wrap;
+			color: $ink;
+		}
+	}
+}
