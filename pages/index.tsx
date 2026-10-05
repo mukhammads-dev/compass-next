@@ -7,6 +7,7 @@ import StyleQuiz from '../libs/components/homepage/StyleQuiz';
 import ProductTabs from '../libs/components/homepage/ProductTabs';
 import TrendingRoomTours from '../libs/components/homepage/TrendingRoomTours';
 import FitsMySpace from '../libs/components/homepage/FitsMySpace';
+import PreLoved from '../libs/components/homepage/PreLoved';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -20,6 +21,7 @@ const Home: NextPage = () => {
 			<ProductTabs />
 			<TrendingRoomTours />
 			<FitsMySpace />
+			<PreLoved />
 		</Stack>
 	);
 };
