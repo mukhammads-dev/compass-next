@@ -3,11 +3,13 @@ import { useRouter } from 'next/router';
 import { FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
-import { Avatar, Button, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import { Avatar, IconButton, Menu, MenuItem, Stack } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import { userVar } from '../../apollo/store';
 import { isAdmin, logOut } from '../auth';
 import { DEFAULT_AVATAR, imageUrl } from '../config';
@@ -20,10 +22,11 @@ const NAV_LINKS = [
 	{ href: '/community', label: 'Community' },
 ];
 
+/** Each language is labelled in its own language, so people find theirs even on a page they cannot read. */
 const LANGUAGES = [
-	{ locale: 'en', code: 'EN', label: 'English' },
-	{ locale: 'ko', code: 'KO', label: '한국어' },
-	{ locale: 'uz', code: 'UZ', label: "O'zbek" },
+	{ locale: 'en', code: 'EN', label: 'English', flag: '/img/flag/en.svg' },
+	{ locale: 'ko', code: 'KO', label: '한국어', flag: '/img/flag/ko.svg' },
+	{ locale: 'uz', code: 'UZ', label: "O'zbekcha", flag: '/img/flag/uz.svg' },
 ];
 
 const Top = () => {
@@ -75,11 +78,7 @@ const Top = () => {
 
 				<nav className={'nav-links'}>
 					{NAV_LINKS.map((link) => (
-						<Link
-							key={link.href}
-							href={link.href}
-							className={router.pathname.startsWith(link.href) ? 'active' : ''}
-						>
+						<Link key={link.href} href={link.href} className={router.pathname.startsWith(link.href) ? 'active' : ''}>
 							{t(link.label)}
 						</Link>
 					))}
@@ -96,23 +95,33 @@ const Top = () => {
 
 				<Stack className={'actions'}>
 					<button
-						className={'lang-btn'}
-						aria-label={'language'}
+						className={`lang-btn ${langAnchor ? 'open' : ''}`}
+						aria-label={`${t('Language')}: ${currentLang.label}`}
+						aria-haspopup={'menu'}
+						aria-expanded={Boolean(langAnchor)}
 						onClick={(e: MouseEvent<HTMLElement>) => setLangAnchor(e.currentTarget)}
 					>
-						{currentLang.code}
-						<KeyboardArrowDownIcon fontSize={'inherit'} />
+						<img src={currentLang.flag} alt={''} className={'flag'} />
+						<ArrowDropDownRoundedIcon className={'caret'} />
 					</button>
-					<Menu anchorEl={langAnchor} open={Boolean(langAnchor)} onClose={() => setLangAnchor(null)}>
-						{LANGUAGES.map((lang) => (
-							<MenuItem
-								key={lang.locale}
-								selected={router.locale === lang.locale}
-								onClick={() => changeLanguageHandler(lang.locale)}
-							>
-								{lang.label}
-							</MenuItem>
-						))}
+					<Menu
+						anchorEl={langAnchor}
+						open={Boolean(langAnchor)}
+						onClose={() => setLangAnchor(null)}
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+						transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+						slotProps={{ paper: { className: 'lang-menu' } }}
+					>
+						{LANGUAGES.map((lang) => {
+							const active = router.locale === lang.locale;
+							return (
+								<MenuItem key={lang.locale} selected={active} onClick={() => changeLanguageHandler(lang.locale)}>
+									<img src={lang.flag} alt={''} className={'flag'} />
+									<span className={'label'}>{lang.label}</span>
+									<span className={'code'}>{active ? <CheckRoundedIcon fontSize={'small'} /> : lang.code}</span>
+								</MenuItem>
+							);
+						})}
 					</Menu>
 
 					{user._id ? (
@@ -145,9 +154,10 @@ const Top = () => {
 							</Menu>
 						</>
 					) : (
-						<Button variant={'contained'} onClick={() => router.push('/account/join')}>
-							{t('Login')}
-						</Button>
+						<Link href={'/account/join'} className={'login-link'}>
+							<LoginRoundedIcon />
+							<span>{t('Login')}</span>
+						</Link>
 					)}
 				</Stack>
 			</Stack>
