@@ -23,8 +23,8 @@ const App = ({ Component, pageProps }: AppProps) => {
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<Component {...pageProps} />
-				{/* live chat floats over every page except the admin panel */}
-				{!router.pathname.startsWith('/_admin') && <Chat />}
+				{/* live chat floats over every page except the admin panel and the login screen */}
+				{!router.pathname.startsWith('/_admin') && router.pathname !== '/account/join' && <Chat />}
 			</ThemeProvider>
 		</ApolloProvider>
 	);

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
 import Logo from './common/Logo';
+import { MemberType } from '../enums/member.enum';
 
 const Footer = () => {
 	const { t } = useTranslation('common');
@@ -29,14 +30,18 @@ const Footer = () => {
 					</div>
 					<div>
 						<strong>{t('Sell on Compass')}</strong>
-						<Link href={'/account/join'}>{t('Open a store')}</Link>
+						<Link href={{ pathname: '/account/join', query: { mode: 'signup', type: MemberType.AGENT } }}>
+							{t('Open a store')}
+						</Link>
 						<Link href={{ pathname: '/mypage', query: { category: 'addProduct' } }}>{t('Sell used furniture')}</Link>
 					</div>
 				</Stack>
 			</Stack>
 			<Stack className={'container'}>
 				<Stack className={'footer-bottom'}>
-					<span>© {new Date().getFullYear()} Compass. {t('All rights reserved.')}</span>
+					<span>
+						© {new Date().getFullYear()} Compass. {t('All rights reserved.')}
+					</span>
 					<span>Seoul · Busan · Online</span>
 				</Stack>
 			</Stack>
