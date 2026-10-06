@@ -3,8 +3,7 @@
 Frontend for **Compass** — a furniture & home marketplace where stores (AGENT) sell products, members (USER) share
 Room Tours with product pins and sell up to 5 used items, and ADMIN moderates.
 
-Built on **Next.js 14 (pages router) · Apollo Client 3 · MUI 5 · SCSS · next-i18next (en / ko / uz)**,
-following `NEXTJS-ARCHITECTURE-STANDARDS.md` (Nestar structure, Compass domain).
+Built on **Next.js 14 (pages router) · Apollo Client 3 · MUI 5 · SCSS · next-i18next (en / ko / uz)**.
 
 ## Run
 
@@ -50,7 +49,20 @@ public/locales/    en, ko, uz
 | `/cs?tab=` | Notices, FAQ, events |
 | `/_admin/users` · `products` · `community` · `cs` | Admin panel |
 
+## Deploy
+
+```bash
+# 1. point the app at the deployed compass-api (values are baked in at build time)
+#    .env.production → REACT_APP_API_URL, REACT_APP_API_GRAPHQL_URL, REACT_APP_API_WS (wss:// behind HTTPS)
+yarn install --frozen-lockfile
+yarn build
+yarn start                         # next start -p 3000
+```
+
+- Run `yarn start` under a process manager (e.g. `pm2 start yarn --name compass-next -- start`) behind a reverse proxy.
+- The API must allow this origin (CORS) and its proxy must forward WebSocket upgrades for the live chat.
+
 ## Notes
 
-- Apollo is pinned to `~3.13` because the standard's `onCompleted → setState` pattern is deprecated from 3.14.
+- Apollo is pinned to `~3.13` because the `onCompleted → setState` pattern used across pages is deprecated from 3.14.
 - Images are served by the backend (`uploads/...`), so plain `<img>` is used on purpose.
