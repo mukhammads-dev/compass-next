@@ -1,18 +1,27 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { FormEvent, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Button, CircularProgress, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { CircularProgress, Stack } from '@mui/material';
+import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import PhoneIphoneRoundedIcon from '@mui/icons-material/PhoneIphoneRounded';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import WeekendOutlinedIcon from '@mui/icons-material/WeekendOutlined';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import withLayoutBasic from '../../libs/components/layout/LayoutBasic';
 import { logIn, signUp } from '../../libs/auth';
 import { MemberType } from '../../libs/enums/member.enum';
-import { Message } from '../../libs/enums/common.enum';
-import { sweetMixinErrorAlert } from '../../libs/sweetAlert';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
 });
+
+type Mode = 'login' | 'signup';
 
 interface JoinForm {
 	nick: string;
@@ -21,37 +30,103 @@ interface JoinForm {
 	type: MemberType;
 }
 
+/** Same limits as compass-api LoginInput / MemberInput, checked before the request is sent. */
+const NICK_LENGTH = { min: 3, max: 12 };
+const PASSWORD_LENGTH = { min: 5, max: 12 };
+const isNickValid = (nick: string) => nick.trim().length >= NICK_LENGTH.min && nick.trim().length <= NICK_LENGTH.max;
+const isPasswordValid = (password: string) =>
+	password.length >= PASSWORD_LENGTH.min && password.length <= PASSWORD_LENGTH.max;
+const isPhoneValid = (phone: string) => phone.replace(/\D/g, '').length >= 9;
+
+interface FieldProps {
+	id: string;
+	label: string;
+	icon: ReactNode;
+	hint?: string;
+	error?: string;
+	trailing?: ReactNode;
+	inputProps: React.InputHTMLAttributes<HTMLInputElement>;
+}
+
+/** Label above, icon inside, one line of help or error below. */
+const Field = ({ id, label, icon, hint, error, trailing, inputProps }: FieldProps) => (
+	<div className={`join-field ${error ? 'has-error' : ''}`}>
+		<label htmlFor={id}>{label}</label>
+		<div className={'input-wrap'}>
+			<span className={'input-icon'}>{icon}</span>
+			<input id={id} aria-invalid={Boolean(error)} aria-describedby={`${id}-help`} {...inputProps} />
+			{trailing}
+		</div>
+		{(error || hint) && (
+			<span id={`${id}-help`} className={'field-help'}>
+				{error || hint}
+			</span>
+		)}
+	</div>
+);
+
 const Join: NextPage = () => {
 	const router = useRouter();
 	const { t } = useTranslation('common');
-	const [loginView, setLoginView] = useState<boolean>(true);
-	const [submitting, setSubmitting] = useState<boolean>(false);
+	const [mode, setMode] = useState<Mode>('login');
 	const [form, setForm] = useState<JoinForm>({ nick: '', password: '', phone: '', type: MemberType.USER });
+	const [touched, setTouched] = useState<Record<string, boolean>>({});
+	const [showPassword, setShowPassword] = useState<boolean>(false);
+	const [remember, setRemember] = useState<boolean>(true);
+	const [submitting, setSubmitting] = useState<boolean>(false);
+	const [formError, setFormError] = useState<string>('');
+
+	const isSignup = mode === 'signup';
+
+	/** LIFECYCLES **/
+	// /account/join?mode=signup&type=AGENT opens sign up with the store role picked (footer "Open a store")
+	useEffect(() => {
+		if (router.query.mode === 'signup') setMode('signup');
+		if (router.query.type === MemberType.AGENT) setForm((current) => ({ ...current, type: MemberType.AGENT }));
+	}, [router.query.mode, router.query.type]);
+
+	/** VALIDATION **/
+	const errors = {
+		nick: isNickValid(form.nick) ? '' : t('Use {{min}}–{{max}} characters', NICK_LENGTH),
+		password: isPasswordValid(form.password) ? '' : t('Use {{min}}–{{max}} characters', PASSWORD_LENGTH),
+		phone: !isSignup || isPhoneValid(form.phone) ? '' : t('Enter a valid phone number'),
+	};
+	const canSubmit = !errors.nick && !errors.password && !errors.phone && !submitting;
+	const errorFor = (key: keyof typeof errors) => (touched[key] ? errors[key] : '');
 
 	/** HANDLERS **/
-	const changeHandler = (key: keyof JoinForm, value: string) => setForm({ ...form, [key]: value });
+	const changeHandler = (key: keyof JoinForm, value: string) => {
+		setForm({ ...form, [key]: value });
+		if (formError) setFormError('');
+	};
+
+	const switchMode = (next: Mode) => {
+		setMode(next);
+		setTouched({});
+		setFormError('');
+	};
 
 	const submitHandler = async (e: FormEvent) => {
 		e.preventDefault();
+		setTouched({ nick: true, password: true, phone: true });
+		if (!canSubmit) return;
+
 		try {
-			const nick = form.nick.trim();
-			if (!nick || !form.password || (!loginView && !form.phone.trim())) throw new Error(Message.INSERT_ALL_INPUTS);
 			setSubmitting(true);
-
-			if (loginView) await logIn({ memberNick: nick, memberPassword: form.password });
-			else
-				await signUp({
-					memberNick: nick,
-					memberPassword: form.password,
-					memberPhone: form.phone.trim(),
-					memberType: form.type,
-				});
-
+			const memberNick = form.nick.trim();
+			if (isSignup) {
+				await signUp(
+					{ memberNick, memberPassword: form.password, memberPhone: form.phone.trim(), memberType: form.type },
+					remember,
+				);
+			} else {
+				await logIn({ memberNick, memberPassword: form.password }, remember);
+			}
 			const back = typeof router.query.back === 'string' && router.query.back.startsWith('/') ? router.query.back : '/';
 			await router.push(back);
 		} catch (err: any) {
 			console.log('ERROR, submitHandler:', err.message);
-			sweetMixinErrorAlert(err.message).then();
+			setFormError(err.message);
 		} finally {
 			setSubmitting(false);
 		}
@@ -59,71 +134,148 @@ const Join: NextPage = () => {
 
 	return (
 		<Stack id={'join-page'}>
-			<Stack className={'container'}>
-				<Stack className={'join-card'}>
-					<Stack className={'join-tabs'}>
-						<button className={loginView ? 'active' : ''} onClick={() => setLoginView(true)}>
-							{t('Login')}
-						</button>
-						<button className={!loginView ? 'active' : ''} onClick={() => setLoginView(false)}>
-							{t('Sign up')}
-						</button>
-					</Stack>
-
-					<form onSubmit={submitHandler}>
-						<TextField
-							label={t('Nickname')}
-							value={form.nick}
-							onChange={(e) => changeHandler('nick', e.target.value)}
-							autoComplete={'username'}
-							fullWidth
-						/>
-						<TextField
-							label={t('Password')}
-							type={'password'}
-							value={form.password}
-							onChange={(e) => changeHandler('password', e.target.value)}
-							autoComplete={loginView ? 'current-password' : 'new-password'}
-							fullWidth
-						/>
-
-						{!loginView && (
-							<>
-								<TextField
-									label={t('Phone')}
-									value={form.phone}
-									onChange={(e) => changeHandler('phone', e.target.value)}
-									placeholder={'010-0000-0000'}
-									autoComplete={'tel'}
-									fullWidth
-								/>
-								<Stack className={'type-select'}>
-									<span>{t('I want to')}</span>
-									<ToggleButtonGroup
-										exclusive
-										fullWidth
-										color={'primary'}
-										value={form.type}
-										onChange={(_, value) => value && changeHandler('type', value)}
-									>
-										<ToggleButton value={MemberType.USER}>{t('Shop & share my home')}</ToggleButton>
-										<ToggleButton value={MemberType.AGENT}>{t('Open a store')}</ToggleButton>
-									</ToggleButtonGroup>
-								</Stack>
-							</>
-						)}
-
-						<Button type={'submit'} variant={'contained'} size={'large'} fullWidth disabled={submitting}>
-							{submitting ? <CircularProgress size={22} color={'inherit'} /> : loginView ? t('Login') : t('Create account')}
-						</Button>
-					</form>
-
-					<p className={'switch-text'}>
-						{loginView ? t("Don't have an account?") : t('Already have an account?')}{' '}
-						<button onClick={() => setLoginView(!loginView)}>{loginView ? t('Sign up') : t('Login')}</button>
+			<div className={'join-card'}>
+				<header className={'join-head'}>
+					<h1>{isSignup ? t('Create your account') : t('Welcome back')}</h1>
+					<p>
+						{isSignup
+							? t('Shop real homes, share yours, or open a store.')
+							: t('Log in to save rooms, follow stores and join the chat.')}
 					</p>
-				</Stack>
-			</Stack>
+				</header>
+
+				<form onSubmit={submitHandler} noValidate>
+					{formError && (
+						<div className={'form-error'} role={'alert'}>
+							<ErrorOutlineRoundedIcon fontSize={'small'} />
+							<span>{t(formError)}</span>
+						</div>
+					)}
+
+					{isSignup && (
+						<fieldset className={'role-picker'}>
+							<legend>{t('I want to')}</legend>
+							<div className={'role-options'}>
+								{[
+									{
+										value: MemberType.USER,
+										icon: <WeekendOutlinedIcon />,
+										title: t('Shop & share my home'),
+										desc: t('Buy, sell used, post Room Tours'),
+									},
+									{
+										value: MemberType.AGENT,
+										icon: <StorefrontOutlinedIcon />,
+										title: t('Open a store'),
+										desc: t('List new furniture as a store'),
+									},
+								].map((role) => (
+									<label key={role.value} className={`role-option ${form.type === role.value ? 'selected' : ''}`}>
+										<input
+											type={'radio'}
+											name={'memberType'}
+											value={role.value}
+											checked={form.type === role.value}
+											onChange={() => changeHandler('type', role.value)}
+										/>
+										<span className={'role-icon'}>{role.icon}</span>
+										<strong>{role.title}</strong>
+										<small>{role.desc}</small>
+									</label>
+								))}
+							</div>
+						</fieldset>
+					)}
+
+					<Field
+						id={'join-nick'}
+						label={t('Nickname')}
+						icon={<PersonOutlineRoundedIcon />}
+						error={errorFor('nick')}
+						hint={isSignup ? t('Use {{min}}–{{max}} characters', NICK_LENGTH) : undefined}
+						inputProps={{
+							value: form.nick,
+							placeholder: t('e.g. minji_home') as string,
+							autoComplete: 'username',
+							maxLength: NICK_LENGTH.max,
+							onChange: (e) => changeHandler('nick', e.target.value),
+							onBlur: () => setTouched({ ...touched, nick: true }),
+						}}
+					/>
+
+					<Field
+						id={'join-password'}
+						label={t('Password')}
+						icon={<LockOutlinedIcon />}
+						error={errorFor('password')}
+						hint={isSignup ? t('Use {{min}}–{{max}} characters', PASSWORD_LENGTH) : undefined}
+						inputProps={{
+							type: showPassword ? 'text' : 'password',
+							value: form.password,
+							placeholder: '••••••••',
+							autoComplete: isSignup ? 'new-password' : 'current-password',
+							maxLength: PASSWORD_LENGTH.max,
+							onChange: (e) => changeHandler('password', e.target.value),
+							onBlur: () => setTouched({ ...touched, password: true }),
+						}}
+						trailing={
+							<button
+								type={'button'}
+								className={'peek-btn'}
+								onClick={() => setShowPassword(!showPassword)}
+								aria-label={(showPassword ? t('Hide password') : t('Show password')) as string}
+							>
+								{showPassword ? <VisibilityOffOutlinedIcon /> : <VisibilityOutlinedIcon />}
+							</button>
+						}
+					/>
+
+					{isSignup && (
+						<Field
+							id={'join-phone'}
+							label={t('Phone')}
+							icon={<PhoneIphoneRoundedIcon />}
+							error={errorFor('phone')}
+							inputProps={{
+								type: 'tel',
+								value: form.phone,
+								placeholder: '010-0000-0000',
+								autoComplete: 'tel',
+								onChange: (e) => changeHandler('phone', e.target.value),
+								onBlur: () => setTouched({ ...touched, phone: true }),
+							}}
+						/>
+					)}
+
+					<label className={'remember'}>
+						<input type={'checkbox'} checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+						<span className={'box'} aria-hidden />
+						<span>{t('Keep me logged in')}</span>
+					</label>
+
+					<button type={'submit'} className={'submit-btn'} disabled={!canSubmit}>
+						{submitting ? (
+							<CircularProgress size={22} color={'inherit'} />
+						) : isSignup ? (
+							t('Create account')
+						) : (
+							t('Log in')
+						)}
+					</button>
+				</form>
+
+				<p className={'switch-text'}>
+					{isSignup ? t('Already have an account?') : t('New to Compass?')}{' '}
+					<button type={'button'} onClick={() => switchMode(isSignup ? 'login' : 'signup')}>
+						{isSignup ? t('Log in') : t('Create an account')}
+					</button>
+				</p>
+			</div>
+
+			<p className={'join-trust'}>
+				<ShieldOutlinedIcon fontSize={'inherit'} />
+				{t('Passwords are stored encrypted.')}
+			</p>
 		</Stack>
 	);
 };

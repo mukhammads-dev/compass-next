@@ -1,55 +1,321 @@
 #join-page {
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+	padding: 64px 16px 72px;
+	background: $soft;
+	@include mobile {
+		padding: 28px 12px 40px;
+	}
+
 	.join-card {
-		max-width: 440px;
 		width: 100%;
-		margin: 0 auto;
-		padding: 28px;
-		gap: 20px;
+		max-width: 460px;
+		padding: 40px 40px 28px;
+		border-radius: 24px;
 		background: $white;
-		border: 1px solid $line;
-		border-radius: 16px;
-		box-shadow: $shadow;
-		form {
-			display: flex;
-			flex-direction: column;
-			gap: 16px;
+		box-shadow:
+			0 1px 2px rgba(20, 20, 20, 0.04),
+			0 20px 48px rgba(20, 20, 20, 0.08);
+		@include mobile {
+			padding: 28px 20px 20px;
+			border-radius: 20px;
 		}
 	}
-	.join-tabs {
-		flex-direction: row;
-		border-bottom: 1px solid $line;
-		button {
-			flex: 1;
-			padding: 12px 0;
-			border: 0;
-			border-bottom: 2px solid transparent;
-			background: none;
-			font-size: 16px;
-			font-weight: 600;
+
+	.join-head {
+		margin-bottom: 26px;
+		text-align: center;
+		h1 {
+			font-family: $font-serif;
+			font-weight: 500;
+			font-size: 34px;
+			line-height: 1.1;
+			letter-spacing: -0.03em;
+			font-variation-settings: 'SOFT' 100;
+		}
+		p {
+			margin-top: 10px;
+			font-size: 15px;
+			line-height: 1.5;
 			color: $muted;
-			&.active {
-				color: $ink;
+		}
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	.form-error {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		padding: 12px 14px;
+		border-radius: 12px;
+		background: rgba($danger, 0.07);
+		color: $danger;
+		font-size: 14px;
+		font-weight: 600;
+		svg {
+			margin-top: 1px;
+		}
+	}
+
+	/* ---- fields ---- */
+	.join-field {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		label {
+			font-size: 14px;
+			font-weight: 700;
+			color: $ink;
+		}
+		.input-wrap {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			height: 52px;
+			padding: 0 6px 0 16px;
+			border: 1px solid $line;
+			border-radius: 14px;
+			background: $soft;
+			transition:
+				border-color 0.15s ease,
+				background 0.15s ease,
+				box-shadow 0.15s ease;
+			&:focus-within {
 				border-color: $ink;
+				background: $white;
+				box-shadow: 0 0 0 4px rgba(20, 20, 20, 0.06);
+			}
+		}
+		.input-icon {
+			display: grid;
+			color: $muted;
+			svg {
+				font-size: 20px;
+			}
+		}
+		input {
+			flex: 1;
+			min-width: 0;
+			height: 100%;
+			border: 0;
+			outline: 0;
+			background: transparent;
+			font: inherit;
+			font-size: 15px;
+			color: $ink;
+			&::placeholder {
+				color: $faint;
+			}
+		}
+		.peek-btn {
+			width: 40px;
+			height: 40px;
+			border: 0;
+			border-radius: 10px;
+			background: transparent;
+			color: $muted;
+			display: grid;
+			place-items: center;
+			cursor: pointer;
+			&:hover {
+				background: $line;
+				color: $ink;
+			}
+			svg {
+				font-size: 20px;
+			}
+		}
+		.field-help {
+			font-size: 12px;
+			color: $muted;
+		}
+		&.has-error {
+			.input-wrap {
+				border-color: $danger;
+				background: $white;
+			}
+			.field-help {
+				color: $danger;
 			}
 		}
 	}
-	.type-select {
-		gap: 8px;
-		span {
-			font-size: 13px;
-			color: $muted;
+
+	/* ---- role picker (sign up) ---- */
+	.role-picker {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		legend {
+			margin-bottom: 8px;
+			padding: 0;
+			font-size: 14px;
+			font-weight: 700;
 		}
 	}
+	.role-options {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+	}
+	.role-option {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 14px;
+		border: 1.5px solid $line;
+		border-radius: 14px;
+		cursor: pointer;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+		input {
+			position: absolute;
+			opacity: 0;
+			pointer-events: none;
+		}
+		.role-icon {
+			display: grid;
+			place-items: center;
+			width: 36px;
+			height: 36px;
+			margin-bottom: 4px;
+			border-radius: 10px;
+			background: $soft;
+			color: $ink;
+		}
+		strong {
+			font-size: 14px;
+		}
+		small {
+			font-size: 12px;
+			line-height: 1.35;
+			color: $muted;
+		}
+		&:hover {
+			border-color: $faint;
+		}
+		&:focus-within {
+			outline: 2px solid $ink;
+			outline-offset: 2px;
+		}
+		&.selected {
+			border-color: $ink;
+			background: $soft;
+			.role-icon {
+				background: $ink;
+				color: $white;
+			}
+		}
+	}
+
+	/* ---- remember me ---- */
+	.remember {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		width: fit-content;
+		font-size: 14px;
+		color: $ink-2;
+		cursor: pointer;
+		input {
+			position: absolute;
+			opacity: 0;
+			pointer-events: none;
+		}
+		.box {
+			width: 20px;
+			height: 20px;
+			border: 1.5px solid $faint;
+			border-radius: 6px;
+			display: grid;
+			place-items: center;
+			transition: all 0.15s ease;
+		}
+		input:checked + .box {
+			border-color: $ink;
+			background: $ink;
+			&::after {
+				content: '';
+				width: 5px;
+				height: 10px;
+				margin-top: -2px;
+				border: solid $white;
+				border-width: 0 2px 2px 0;
+				transform: rotate(45deg);
+			}
+		}
+		input:focus-visible + .box {
+			outline: 2px solid $ink;
+			outline-offset: 2px;
+		}
+	}
+
+	/* ---- submit ---- */
+	.submit-btn {
+		height: 54px;
+		margin-top: 4px;
+		border: 0;
+		border-radius: 14px;
+		background: $ink;
+		color: $white;
+		font: inherit;
+		font-size: 16px;
+		font-weight: 700;
+		display: grid;
+		place-items: center;
+		cursor: pointer;
+		transition: background 0.2s ease;
+		&:hover:not(:disabled) {
+			background: $oak;
+		}
+		&:disabled {
+			background: $line;
+			color: $faint;
+			cursor: not-allowed;
+		}
+		&:focus-visible {
+			outline: 2px solid $oak;
+			outline-offset: 3px;
+		}
+	}
+
 	.switch-text {
+		margin-top: 24px;
+		padding-top: 20px;
+		border-top: 1px solid $line;
 		text-align: center;
 		font-size: 14px;
 		color: $muted;
 		button {
+			padding: 0;
 			border: 0;
 			background: none;
+			font: inherit;
+			font-weight: 700;
 			color: $ink;
-			font-weight: 600;
-			padding: 0;
+			text-decoration: underline;
+			text-decoration-color: $oak;
+			text-underline-offset: 4px;
+			cursor: pointer;
+			&:hover {
+				color: darken($oak, 12%);
+			}
 		}
+	}
+
+	.join-trust {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+		color: $muted;
 	}
 }

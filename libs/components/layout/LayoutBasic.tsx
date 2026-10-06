@@ -64,14 +64,17 @@ const withLayoutBasic = (Component: any) => {
 						<Top />
 					</Stack>
 
-					<Stack className={'header-basic'}>
-						<Stack className={'container'}>
-							<strong>{t(memoizedValues.title)}</strong>
-							<span>{t(memoizedValues.desc)}</span>
+					{/* the login card is its own header, so the banner is skipped there */}
+					{router.pathname !== '/account/join' && (
+						<Stack className={'header-basic'}>
+							<Stack className={'container'}>
+								<strong>{t(memoizedValues.title)}</strong>
+								<span>{t(memoizedValues.desc)}</span>
+							</Stack>
 						</Stack>
-					</Stack>
+					)}
 
-					<Stack id={'main'}>
+					<Stack id={'main'} className={router.pathname === '/account/join' ? 'main-join' : ''}>
 						<Component {...props} />
 					</Stack>
 

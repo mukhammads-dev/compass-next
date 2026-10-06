@@ -13,7 +13,7 @@ export { getJwtToken } from './token';
 
 /**
  * AUTH FLOW (compass-api keeps the JWT payload minimal):
- *   login / signup → full Member + accessToken → token to storage, Member to userVar
+ *   login / signup → full Member + accessToken → token to storage (local or session: "Remember me"), Member to userVar
  *   page reload    → layout calls updateUserInfo(token) → 5 claims to userVar
  *   logout         → clear token, reset userVar, clear Apollo cache
  */
@@ -27,23 +27,23 @@ const toAuthUser = (member: Partial<Member> | CustomJwtPayload): AuthUser => ({
 	memberPoints: (member as Partial<Member>).memberPoints,
 });
 
-const applySession = (member: T | undefined): void => {
+const applySession = (member: T | undefined, remember?: boolean): void => {
 	const accessToken: string | undefined = member?.accessToken;
 	if (!member || !accessToken) throw new Error('Authentication failed!');
-	setJwtToken(accessToken);
+	setJwtToken(accessToken, remember);
 	userVar(toAuthUser(member));
 };
 
-export const logIn = async (input: LoginInput): Promise<void> => {
+export const logIn = async (input: LoginInput, remember: boolean = true): Promise<void> => {
 	const apolloClient = initializeApollo();
 	const result = await apolloClient.mutate({ mutation: LOGIN, variables: { input }, fetchPolicy: 'network-only' });
-	applySession(result?.data?.login);
+	applySession(result?.data?.login, remember);
 };
 
-export const signUp = async (input: MemberInput): Promise<void> => {
+export const signUp = async (input: MemberInput, remember: boolean = true): Promise<void> => {
 	const apolloClient = initializeApollo();
 	const result = await apolloClient.mutate({ mutation: SIGN_UP, variables: { input }, fetchPolicy: 'network-only' });
-	applySession(result?.data?.signup);
+	applySession(result?.data?.signup, remember);
 };
 
 /** After updateMember the backend re-issues the token with the new nick / image. */
