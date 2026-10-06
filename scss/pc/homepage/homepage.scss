@@ -477,7 +477,7 @@
 		gap: 10px;
 		padding: 24px;
 		border-radius: $radius;
-		background: $oak-soft;
+		background: $soft;
 		strong {
 			font-family: $font-serif;
 			font-weight: 500;
@@ -494,7 +494,7 @@
 			font-style: normal;
 			font-weight: 700;
 			font-size: 14px;
-			color: darken($oak, 16%);
+			color: $ink;
 			text-decoration: underline;
 			text-underline-offset: 4px;
 		}
@@ -558,7 +558,7 @@
 			stroke: none;
 		}
 		.piece-label {
-			fill: darken($oak, 18%);
+			fill: $ink-2;
 			font-size: 13px;
 			font-weight: 700;
 			font-family: $font;
@@ -658,9 +658,9 @@
 		font-weight: 700;
 		text-decoration: underline;
 		text-underline-offset: 5px;
-		text-decoration-color: $oak;
+		text-decoration-color: $faint;
 		&:hover {
-			color: darken($oak, 12%);
+			text-decoration-color: $ink;
 		}
 	}
 }

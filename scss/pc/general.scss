@@ -241,8 +241,8 @@
 			gap: 8px;
 			padding: 6px 14px;
 			border-radius: 999px;
-			background: $oak-soft;
-			color: darken($oak, 12%);
+			background: $soft;
+			color: $ink-2;
 			font-size: 13px;
 			font-weight: 700;
 		}
@@ -253,8 +253,6 @@
 			letter-spacing: -0.045em;
 			em {
 				font-style: normal;
-				/* the single brand colour in the hero; darkened so large text clears AA contrast */
-				color: darken($oak, 14%);
 				white-space: nowrap;
 			}
 		}
@@ -678,7 +676,7 @@
 		font-weight: 700;
 		color: $faint;
 		svg {
-			color: $oak;
+			color: $ink;
 		}
 	}
 }

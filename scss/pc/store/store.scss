@@ -29,11 +29,9 @@
 		flex-direction: column;
 		gap: 2px;
 		.eyebrow {
-			font-size: 12px;
-			font-weight: 800;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			color: $oak;
+			font-size: 13px;
+			font-weight: 600;
+			color: $muted;
 		}
 		strong {
 			font-size: 20px;

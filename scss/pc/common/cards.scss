@@ -353,7 +353,7 @@
 		.arrow {
 			flex-shrink: 0;
 			font-size: 18px;
-			color: $oak;
+			color: $muted;
 			opacity: 0.7;
 			transition:
 				transform 0.2s ease,
@@ -361,7 +361,7 @@
 		}
 		&:hover strong {
 			text-decoration: underline;
-			text-decoration-color: $oak;
+			text-decoration-color: $ink;
 			text-underline-offset: 4px;
 		}
 	}
@@ -403,7 +403,7 @@
 		}
 		svg {
 			font-size: 15px;
-			color: $oak;
+			color: $muted;
 		}
 	}
 	.store-stats {
@@ -478,11 +478,11 @@
 				display: none;
 			}
 			&.following {
-				background: $oak-soft;
-				border-color: $oak-soft;
+				background: $soft;
+				border-color: $line;
 				color: $ink;
 				svg {
-					color: $oak;
+					color: $ink;
 				}
 				&:hover {
 					background: rgba($sale, 0.08);

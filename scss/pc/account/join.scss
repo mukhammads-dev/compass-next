@@ -302,11 +302,11 @@
 			font-weight: 700;
 			color: $ink;
 			text-decoration: underline;
-			text-decoration-color: $oak;
+			text-decoration-color: $faint;
 			text-underline-offset: 4px;
 			cursor: pointer;
 			&:hover {
-				color: darken($oak, 12%);
+				text-decoration-color: $ink;
 			}
 		}
 	}
