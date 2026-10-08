@@ -245,11 +245,6 @@
 				white-space: nowrap;
 			}
 		}
-		p {
-			max-width: 560px;
-			color: $muted;
-			font-size: 17px;
-		}
 		@include tablet {
 			h1 {
 				font-size: 44px;
@@ -260,8 +255,55 @@
 			h1 {
 				font-size: 34px;
 			}
-			p {
-				font-size: 15px;
+		}
+	}
+
+	/* Compass Lens entry: one quiet line under the headline */
+	.lens-entry {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px 16px;
+		margin-top: 10px;
+		span {
+			color: $muted;
+			font-size: 15px;
+		}
+	}
+	/* drag a photo over the hero: the whole hero becomes the viewfinder */
+	.lens-drop-veil {
+		position: absolute;
+		inset: 14px;
+		z-index: 5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: $radius-lg;
+		background:
+			linear-gradient($ink, $ink) left 18px top 18px / 44px 3px,
+			linear-gradient($ink, $ink) left 18px top 18px / 3px 44px,
+			linear-gradient($ink, $ink) right 18px top 18px / 44px 3px,
+			linear-gradient($ink, $ink) right 18px top 18px / 3px 44px,
+			linear-gradient($ink, $ink) left 18px bottom 18px / 44px 3px,
+			linear-gradient($ink, $ink) left 18px bottom 18px / 3px 44px,
+			linear-gradient($ink, $ink) right 18px bottom 18px / 44px 3px,
+			linear-gradient($ink, $ink) right 18px bottom 18px / 3px 44px,
+			rgba(255, 255, 255, 0.86);
+		background-repeat: no-repeat;
+		backdrop-filter: blur(6px);
+		pointer-events: none;
+		span {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 24px;
+			border-radius: 999px;
+			background: $ink;
+			color: $white;
+			font-size: 17px;
+			font-weight: 700;
+			svg {
+				color: $oak;
 			}
 		}
 	}

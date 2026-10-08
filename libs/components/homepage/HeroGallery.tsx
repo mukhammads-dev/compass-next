@@ -1,8 +1,11 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useCallback, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
+import CenterFocusWeakRoundedIcon from '@mui/icons-material/CenterFocusWeakRounded';
+import { lensPhotoVar } from '../../../apollo/store';
 import { GET_BOARD_ARTICLES } from '../../../apollo/user/query';
 import { BoardArticle } from '../../types/board-article/board-article';
 import { BoardArticlesInquiry } from '../../types/board-article/board-article.input';
@@ -11,6 +14,7 @@ import { Direction } from '../../enums/common.enum';
 import { STOCK_ROOMS, imageUrl, unsplash } from '../../config';
 import { enumLabel } from '../../utils';
 import { T } from '../../types/common';
+import usePhotoPicker from '../../hooks/usePhotoPicker';
 import HeaderFilter from './HeaderFilter';
 
 interface Slide {
@@ -35,10 +39,21 @@ const initialInput: BoardArticlesInquiry = {
 /**
  * Home hero (Nestar idea, Compass content): an endless strip of real homes.
  * Real Room Tours come first; stock interiors fill the strip until there are enough.
+ * Your own room photo can be shopped too: pick, drop or paste it anywhere on the hero (Compass Lens).
  */
 const HeroGallery = () => {
 	const { t } = useTranslation('common');
+	const router = useRouter();
 	const [roomTours, setRoomTours] = useState<BoardArticle[]>([]);
+
+	const lensHandler = useCallback(
+		(file: File) => {
+			lensPhotoVar(file);
+			router.push('/lens').then();
+		},
+		[router],
+	);
+	const { open, dragging, dropProps, inputProps } = usePhotoPicker(lensHandler);
 
 	/** APOLLO REQUESTS **/
 	useQuery(GET_BOARD_ARTICLES, {
@@ -98,13 +113,29 @@ const HeroGallery = () => {
 	);
 
 	return (
-		<Stack className={'header-main'}>
+		<Stack className={`header-main ${dragging ? 'is-dragging' : ''}`} {...dropProps}>
 			<Stack className={'container hero-head'}>
 				<h1>
 					{t('Real homes.')} <em>{t('Tap anything')}</em> {t('to shop it.')}
 				</h1>
-				<p>{t('Browse rooms people actually live in, check what fits your space, and buy new or used — in one place.')}</p>
+				<div className={'lens-entry'}>
+					<button type={'button'} className={'lens-btn'} onClick={open}>
+						<CenterFocusWeakRoundedIcon />
+						{t('Shop your photo')}
+					</button>
+					<span>{t('or drop a room photo here')}</span>
+					<input {...inputProps} />
+				</div>
 			</Stack>
+
+			{dragging && (
+				<div className={'lens-drop-veil'} aria-hidden>
+					<span>
+						<CenterFocusWeakRoundedIcon />
+						{t('Drop the photo to shop it')}
+					</span>
+				</div>
+			)}
 
 			<div className={'hero-gallery'}>
 				<div className={'track'}>
