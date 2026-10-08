@@ -66,7 +66,6 @@ const StyleQuiz = () => {
 				<div className={'quiz-layout'}>
 					<div className={'quiz-intro'}>
 						<h2>{t('Which room feels like home?')}</h2>
-						<p>{t('Pick up to three. We will show furniture in the styles you chose.')}</p>
 					</div>
 
 					<div className={'quiz-rooms'}>

@@ -19,7 +19,6 @@ import ProductCard from '../common/ProductCard';
 interface ProductTab {
 	id: string;
 	label: string;
-	hint: string;
 	inquiry: ProductsInquiry;
 }
 
@@ -32,25 +31,21 @@ const TABS: ProductTab[] = [
 	{
 		id: 'trending',
 		label: 'Trending now',
-		hint: 'The most loved pieces on Compass',
 		inquiry: { ...base, sort: 'productRank', search: {} },
 	},
 	{
 		id: 'new',
 		label: 'New arrivals',
-		hint: 'Fresh from our stores',
 		inquiry: { ...base, sort: 'createdAt', search: { conditionList: [ProductCondition.NEW] } },
 	},
 	{
 		id: 'homes',
 		label: 'Seen in homes',
-		hint: 'The pieces tagged in the most Room Tours',
 		inquiry: { ...base, sort: 'productRoomTours', search: {} },
 	},
 	{
 		id: 'sale',
 		label: 'On sale',
-		hint: 'Good pieces, better prices',
 		inquiry: { ...base, sort: 'productRank', search: { onSale: true } },
 	},
 ];
@@ -106,10 +101,7 @@ const ProductTabs = () => {
 		<Stack className={'home-section product-tabs'}>
 			<Stack className={'container'}>
 				<Stack className={'section-head'}>
-					<div>
-						<h2>{t('Shop Compass')}</h2>
-						<p>{t(active.hint)}</p>
-					</div>
+					<h2>{t('Shop Compass')}</h2>
 					<Link href={seeAllHref}>
 						{t('See all')} <ArrowForwardIcon fontSize={'inherit'} />
 					</Link>

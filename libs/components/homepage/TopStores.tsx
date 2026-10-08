@@ -30,10 +30,7 @@ const TopStores = () => {
 		<Stack className={'home-section'}>
 			<Stack className={'container'}>
 				<Stack className={'section-head'}>
-					<div>
-						<h2>{t('Top stores')}</h2>
-						<p>{t('Furniture makers and shops you can follow')}</p>
-					</div>
+					<h2>{t('Top stores')}</h2>
 					<Link href={'/store'}>{t('See all')} <ArrowForwardIcon fontSize={'inherit'} /></Link>
 				</Stack>
 				<div className={'grid grid-4 store-grid'}>

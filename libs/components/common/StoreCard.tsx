@@ -7,7 +7,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import NorthEastIcon from '@mui/icons-material/NorthEast';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
 import { userVar } from '../../../apollo/store';
@@ -54,7 +53,6 @@ const StoreCard = ({ store, rank }: StoreCardProps) => {
 	const avatar = imageUrl(store.memberImage, DEFAULT_AVATAR);
 	const hasPhoto = avatar !== DEFAULT_AVATAR;
 	const isMe = user?._id === store._id;
-	const since = store.createdAt ? new Date(store.createdAt).getFullYear() : null;
 
 	/** HANDLERS **/
 	const likeHandler = async () => {
@@ -122,12 +120,6 @@ const StoreCard = ({ store, rank }: StoreCardProps) => {
 						<PlaceOutlinedIcon />
 						{store.memberAddress || t('Online store')}
 					</span>
-					{since && (
-						<span>
-							<CalendarTodayOutlinedIcon />
-							{t('Since')} {since}
-						</span>
-					)}
 				</div>
 
 				<div className={'store-stats'}>

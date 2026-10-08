@@ -89,7 +89,6 @@ const FitsMySpace = () => {
 				<div className={'fits-panel'}>
 					<div className={'fits-control'}>
 						<h2>{t('Will it fit?')}</h2>
-						<p>{t('Slide to the width of your wall. Every product on Compass has real measurements.')}</p>
 						<WallDrawing wall={width} piece={products[0]?.productWidth ?? null} />
 						<Slider
 							value={width}

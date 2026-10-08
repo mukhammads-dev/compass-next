@@ -57,10 +57,7 @@ const TrendingRoomTours = () => {
 		<Stack className={'home-section tours-feed'}>
 			<Stack className={'container'}>
 				<Stack className={'section-head'}>
-					<div>
-						<h2>{t('Room Tours of the week')}</h2>
-						<p>{t('Real homes this week. Tap the pins to shop.')}</p>
-					</div>
+					<h2>{t('Room Tours of the week')}</h2>
 					<Link href={'/room-tour'}>{t('See all')} <ArrowForwardIcon fontSize={'inherit'} /></Link>
 				</Stack>
 				{/* masonry: photo heights vary like a real feed instead of a uniform grid */}

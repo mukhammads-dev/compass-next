@@ -157,11 +157,6 @@
 }
 .style-quiz .quiz-intro {
 	grid-area: intro;
-	p {
-		margin-top: 10px;
-		color: $muted;
-		font-size: 16px;
-	}
 }
 .style-quiz .quiz-rooms {
 	grid-area: rooms;
@@ -525,11 +520,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	p {
-		color: $muted;
-		font-size: 16px;
-		max-width: 460px;
-	}
 	.wall-drawing {
 		width: 100%;
 		height: auto;
@@ -691,11 +681,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
-		p {
-			color: #4a3f31;
-			font-size: 16px;
-			line-height: 1.55;
-		}
 	}
 	.loved-actions {
 		display: flex;

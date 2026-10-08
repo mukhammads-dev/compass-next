@@ -8,7 +8,7 @@ import { Product } from '../../types/product/product';
 import { ProductsInquiry } from '../../types/product/product.input';
 import { ProductCondition } from '../../enums/product.enum';
 import { Direction } from '../../enums/common.enum';
-import { DEFAULT_PRODUCT_IMAGE, MAX_ACTIVE_USED_LISTINGS, imageUrl } from '../../config';
+import { DEFAULT_PRODUCT_IMAGE, imageUrl } from '../../config';
 import { enumLabel, formatPrice } from '../../utils';
 import { T } from '../../types/common';
 
@@ -43,11 +43,6 @@ const PreLoved = () => {
 				<div className={'loved-layout'}>
 					<div className={'loved-intro'}>
 						<h2>{t('Pre-loved, from your neighbours')}</h2>
-						<p>
-							{t('Good furniture deserves a second home. Buy used pieces from people in your city, or list up to {{count}} of your own for free.', {
-								count: MAX_ACTIVE_USED_LISTINGS,
-							})}
-						</p>
 						<div className={'loved-actions'}>
 							<Link href={allHref} className={'btn-dark'}>
 								{t('Browse used')}
