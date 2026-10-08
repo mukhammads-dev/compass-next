@@ -39,6 +39,10 @@ export const MAX_ROOM_TOUR_IMAGES = 10;
 export const MAX_PRODUCT_IMAGES = 10;
 export const MAX_ACTIVE_USED_LISTINGS = 5;
 
+/* ---- Compass Lens ---- */
+export const LENS_MAX_PHOTO_BYTES = 15_000_000; // same as the API upload limit
+export const LENS_TAP_SIZE = 0.3; // a tapped spot searches a square this share of the photo
+
 /* ---- list page sizes ---- */
 export const PRODUCTS_PAGE_LIMIT = 12;
 export const ROOM_TOURS_PAGE_LIMIT = 9;

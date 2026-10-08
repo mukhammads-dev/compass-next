@@ -31,3 +31,8 @@ export const chatOnlineVar = makeVar<number>(0);
 export const chatStatusVar = makeVar<ChatStatus>('idle');
 /** The last error the server sent to this connection (cleared when the user types). */
 export const chatErrorVar = makeVar<string>('');
+
+/* ---- Compass Lens ---- */
+
+/** A photo picked on another page (the home hero), handed to /lens which searches it and clears this. */
+export const lensPhotoVar = makeVar<File | null>(null);

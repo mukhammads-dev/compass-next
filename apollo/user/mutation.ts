@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { ARTICLE_FIELDS, MEMBER_FIELDS, MY_ROOM_FIELDS, PRODUCT_FIELDS } from '../fragments';
+import { ARTICLE_FIELDS, MEMBER_FIELDS, MY_ROOM_FIELDS, OWNER_FIELDS, PRODUCT_FIELDS } from '../fragments';
 
 /**************************
  *         MEMBER         *
@@ -192,4 +192,32 @@ export const UPDATE_MY_ROOM = gql`
 		}
 	}
 	${MY_ROOM_FIELDS}
+`;
+
+/**************************
+ *          LENS          *
+ *************************/
+
+/** Sent as multipart by libs/upload.ts (searchPhoto), not through useMutation. */
+export const LENS_SEARCH = gql`
+	mutation LensSearch($file: Upload!) {
+		lensSearch(file: $file) {
+			image
+			finds {
+				label
+				productType
+				score
+				x
+				y
+				w
+				h
+				products {
+					...ProductFields
+					memberData { ...OwnerFields }
+				}
+			}
+		}
+	}
+	${PRODUCT_FIELDS}
+	${OWNER_FIELDS}
 `;

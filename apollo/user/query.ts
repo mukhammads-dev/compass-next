@@ -295,3 +295,27 @@ export const CHECK_PRODUCT_FIT = gql`
 		}
 	}
 `;
+
+/**************************
+ *          LENS          *
+ *************************/
+
+export const LENS_REGION = gql`
+	query LensRegion($input: LensRegionInput!) {
+		lensRegion(input: $input) {
+			label
+			productType
+			score
+			x
+			y
+			w
+			h
+			products {
+				...ProductFields
+				memberData { ...OwnerFields }
+			}
+		}
+	}
+	${PRODUCT_FIELDS}
+	${OWNER_FIELDS}
+`;

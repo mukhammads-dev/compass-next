@@ -1,6 +1,9 @@
 import axios from 'axios';
+import { print } from 'graphql';
+import { LENS_SEARCH } from '../apollo/user/mutation';
 import { getJwtToken } from './auth/token';
 import { REACT_APP_API_GRAPHQL_URL } from './config';
+import { LensResult } from './types/lens/lens';
 
 type UploadTarget = 'member' | 'product' | 'article' | 'my-room';
 
@@ -46,4 +49,19 @@ export const uploadImages = async (files: File[], target: UploadTarget): Promise
 	const response = await axios.post(REACT_APP_API_GRAPHQL_URL, formData, { headers: headers() });
 	if (response.data?.errors?.length) throw new Error(response.data.errors[0].message);
 	return response.data.data.imagesUploader;
+};
+
+/** Compass Lens: uploads a room photo and returns what was found in it. Works for guests too. */
+export const searchPhoto = async (file: File): Promise<LensResult> => {
+	const formData = new FormData();
+	formData.append('operations', JSON.stringify({ query: print(LENS_SEARCH), variables: { file: null } }));
+	formData.append('map', JSON.stringify({ '0': ['variables.file'] }));
+	formData.append('0', file);
+
+	const token = getJwtToken();
+	const response = await axios.post(REACT_APP_API_GRAPHQL_URL, formData, {
+		headers: { 'apollo-require-preflight': true, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+	});
+	if (response.data?.errors?.length) throw new Error(response.data.errors[0].message);
+	return response.data.data.lensSearch;
 };
