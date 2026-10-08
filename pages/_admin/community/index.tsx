@@ -1,10 +1,13 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { MenuItem, Select, Stack, Tab, TablePagination, Tabs } from '@mui/material';
+import { Stack } from '@mui/material';
 import withAdminLayout from '../../../libs/components/layout/LayoutAdmin';
 import CommunityArticleList from '../../../libs/components/admin/community/CommunityArticleList';
+import AdminHeader from '../../../libs/components/admin/common/AdminHeader';
+import AdminSegments from '../../../libs/components/admin/common/AdminSegments';
+import AdminPager from '../../../libs/components/admin/common/AdminPager';
 import NoData from '../../../libs/components/common/NoData';
 import { GET_ALL_BOARD_ARTICLES_BY_ADMIN } from '../../../apollo/admin/query';
 import { REMOVE_BOARD_ARTICLE_BY_ADMIN, UPDATE_BOARD_ARTICLE_BY_ADMIN } from '../../../apollo/admin/mutation';
@@ -55,7 +58,7 @@ const AdminCommunity: NextPage = () => {
 
 	const deleteArticleHandler = async (id: string) => {
 		try {
-			if (!(await sweetConfirmAlert('Soft-delete this post?'))) return;
+			if (!(await sweetConfirmAlert('Hide this post from the community?'))) return;
 			await updateBoardArticleByAdmin({ variables: { input: { _id: id, articleStatus: BoardArticleStatus.DELETE } } });
 			await reload();
 			await sweetTopSmallSuccessAlert('Deleted', 800);
@@ -76,49 +79,32 @@ const AdminCommunity: NextPage = () => {
 		}
 	};
 
+	const changeSearch = (search: AllBoardArticlesInquiry['search']) =>
+		setArticlesInquiry({ ...articlesInquiry, page: 1, search });
+
 	return (
 		<Stack id={'admin-community-page'} className={'admin-page'}>
-			<Stack className={'admin-toolbar'}>
-				<Tabs
-					value={articlesInquiry.search.articleStatus ?? 'ALL'}
-					onChange={(_, value: string) =>
-						setArticlesInquiry({
-							...articlesInquiry,
-							page: 1,
-							search: {
-								...articlesInquiry.search,
-								articleStatus: value === 'ALL' ? undefined : (value as BoardArticleStatus),
-							},
-						})
+			<AdminHeader title={'Community'} total={total} unit={total === 1 ? 'post' : 'posts'} />
+
+			<div className={'admin-toolbar'}>
+				<AdminSegments
+					label={'Board'}
+					options={Object.values(BoardArticleCategory)}
+					value={articlesInquiry.search.articleCategory}
+					allLabel={'All boards'}
+					onChange={(articleCategory) =>
+						changeSearch({ ...articlesInquiry.search, articleCategory: articleCategory as BoardArticleCategory })
 					}
-				>
-					<Tab value={'ALL'} label={'All'} />
-					{Object.values(BoardArticleStatus).map((status) => (
-						<Tab key={status} value={status} label={status} />
-					))}
-				</Tabs>
-				<Select
-					size={'small'}
-					value={articlesInquiry.search.articleCategory ?? 'ALL'}
-					onChange={(e) =>
-						setArticlesInquiry({
-							...articlesInquiry,
-							page: 1,
-							search: {
-								...articlesInquiry.search,
-								articleCategory: e.target.value === 'ALL' ? undefined : (e.target.value as BoardArticleCategory),
-							},
-						})
+				/>
+				<AdminSegments
+					label={'Status'}
+					options={Object.values(BoardArticleStatus)}
+					value={articlesInquiry.search.articleStatus}
+					onChange={(articleStatus) =>
+						changeSearch({ ...articlesInquiry.search, articleStatus: articleStatus as BoardArticleStatus })
 					}
-				>
-					<MenuItem value={'ALL'}>All boards</MenuItem>
-					{Object.values(BoardArticleCategory).map((category) => (
-						<MenuItem key={category} value={category}>
-							{category}
-						</MenuItem>
-					))}
-				</Select>
-			</Stack>
+				/>
+			</div>
 
 			{articles.length ? (
 				<CommunityArticleList
@@ -130,16 +116,11 @@ const AdminCommunity: NextPage = () => {
 				<NoData />
 			)}
 
-			<TablePagination
-				component={'div'}
-				count={total}
-				page={articlesInquiry.page - 1}
-				rowsPerPage={articlesInquiry.limit}
-				rowsPerPageOptions={[10, 20, 50]}
-				onPageChange={(_, page: number) => setArticlesInquiry({ ...articlesInquiry, page: page + 1 })}
-				onRowsPerPageChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setArticlesInquiry({ ...articlesInquiry, page: 1, limit: parseInt(e.target.value, 10) })
-				}
+			<AdminPager
+				page={articlesInquiry.page}
+				limit={articlesInquiry.limit}
+				total={total}
+				onPage={(page) => setArticlesInquiry({ ...articlesInquiry, page })}
 			/>
 		</Stack>
 	);

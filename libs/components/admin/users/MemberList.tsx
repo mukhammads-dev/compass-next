@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import moment from 'moment';
-import { Avatar, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Avatar, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Member } from '../../../types/member/member';
 import { MemberStatus, MemberType } from '../../../enums/member.enum';
 import { DEFAULT_AVATAR, imageUrl } from '../../../config';
+import StatusSelect from '../common/StatusSelect';
 
 interface MemberListProps {
 	members: Member[];
@@ -12,7 +13,7 @@ interface MemberListProps {
 
 const MemberList = ({ members, updateMemberHandler }: MemberListProps) => {
 	return (
-		<Table size={'small'} className={'admin-table'}>
+		<Table className={'admin-table'}>
 			<TableHead>
 				<TableRow>
 					<TableCell>Member</TableCell>
@@ -27,45 +28,37 @@ const MemberList = ({ members, updateMemberHandler }: MemberListProps) => {
 			</TableHead>
 			<TableBody>
 				{members.map((member) => (
-					<TableRow key={member._id} hover>
+					<TableRow key={member._id}>
 						<TableCell>
-							<Link href={{ pathname: '/member', query: { memberId: member._id } }} className={'cell-member'}>
-								<Avatar src={imageUrl(member.memberImage, DEFAULT_AVATAR)} sx={{ width: 28, height: 28 }} />
-								{member.memberNick}
+							<Link href={{ pathname: '/member', query: { memberId: member._id } }} className={'cell-main'}>
+								<Avatar src={imageUrl(member.memberImage, DEFAULT_AVATAR)} alt={''} />
+								<span>
+									<strong>{member.memberNick}</strong>
+									{member.memberFullName && <small>{member.memberFullName}</small>}
+								</span>
 							</Link>
 						</TableCell>
-						<TableCell>{member.memberPhone}</TableCell>
+						<TableCell className={'cell-muted'}>{member.memberPhone}</TableCell>
 						<TableCell align={'right'}>{member.memberProducts}</TableCell>
 						<TableCell align={'right'}>{member.memberArticles}</TableCell>
 						<TableCell align={'right'}>{member.memberPoints}</TableCell>
-						<TableCell>{moment(member.createdAt).format('YYYY.MM.DD')}</TableCell>
+						<TableCell className={'cell-muted'}>{moment(member.createdAt).format('YYYY.MM.DD')}</TableCell>
 						<TableCell>
-							<Select
-								size={'small'}
+							<StatusSelect
+								label={`Type of ${member.memberNick}`}
 								value={member.memberType}
-								onChange={(e) => updateMemberHandler({ _id: member._id, memberType: e.target.value as MemberType })}
-							>
-								{Object.values(MemberType).map((type) => (
-									<MenuItem key={type} value={type}>
-										{type}
-									</MenuItem>
-								))}
-							</Select>
+								options={Object.values(MemberType)}
+								dot={false}
+								onChange={(memberType) => updateMemberHandler({ _id: member._id, memberType })}
+							/>
 						</TableCell>
 						<TableCell>
-							<Select
-								size={'small'}
+							<StatusSelect
+								label={`Status of ${member.memberNick}`}
 								value={member.memberStatus}
-								onChange={(e) =>
-									updateMemberHandler({ _id: member._id, memberStatus: e.target.value as MemberStatus })
-								}
-							>
-								{Object.values(MemberStatus).map((status) => (
-									<MenuItem key={status} value={status}>
-										{status}
-									</MenuItem>
-								))}
-							</Select>
+								options={Object.values(MemberStatus)}
+								onChange={(memberStatus) => updateMemberHandler({ _id: member._id, memberStatus })}
+							/>
 						</TableCell>
 					</TableRow>
 				))}

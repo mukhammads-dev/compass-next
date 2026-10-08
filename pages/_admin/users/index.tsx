@@ -1,10 +1,15 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Stack, Tab, TablePagination, Tabs, TextField } from '@mui/material';
+import { Stack } from '@mui/material';
 import withAdminLayout from '../../../libs/components/layout/LayoutAdmin';
 import MemberList from '../../../libs/components/admin/users/MemberList';
+import AdminHeader from '../../../libs/components/admin/common/AdminHeader';
+import AdminSegments from '../../../libs/components/admin/common/AdminSegments';
+import AdminSearch from '../../../libs/components/admin/common/AdminSearch';
+import AdminPager from '../../../libs/components/admin/common/AdminPager';
+import { adminLabel } from '../../../libs/components/admin/common/adminLabels';
 import NoData from '../../../libs/components/common/NoData';
 import { GET_ALL_MEMBERS_BY_ADMIN } from '../../../apollo/admin/query';
 import { UPDATE_MEMBER_BY_ADMIN } from '../../../apollo/admin/mutation';
@@ -25,7 +30,6 @@ const AdminUsers: NextPage = () => {
 	const [membersInquiry, setMembersInquiry] = useState<MembersInquiry>(initialInquiry);
 	const [members, setMembers] = useState<Member[]>([]);
 	const [total, setTotal] = useState<number>(0);
-	const [text, setText] = useState<string>('');
 
 	/** APOLLO REQUESTS **/
 	const [updateMemberByAdmin] = useMutation(UPDATE_MEMBER_BY_ADMIN);
@@ -46,7 +50,7 @@ const AdminUsers: NextPage = () => {
 	const updateMemberHandler = async (input: { _id: string; memberType?: MemberType; memberStatus?: MemberStatus }) => {
 		try {
 			if (input.memberStatus && input.memberStatus !== MemberStatus.ACTIVE) {
-				if (!(await sweetConfirmAlert(`Change status to ${input.memberStatus}?`))) return;
+				if (!(await sweetConfirmAlert(`Mark this member as ${adminLabel(input.memberStatus).toLowerCase()}?`))) return;
 			}
 			await updateMemberByAdmin({ variables: { input } });
 			const { data } = await getAllMembersRefetch({ input: membersInquiry });
@@ -60,52 +64,37 @@ const AdminUsers: NextPage = () => {
 
 	return (
 		<Stack id={'admin-users-page'} className={'admin-page'}>
-			<Stack className={'admin-toolbar'}>
-				<Tabs
-					value={membersInquiry.search.memberStatus ?? 'ALL'}
-					onChange={(_, value: string) =>
-						changeSearch({ ...membersInquiry.search, memberStatus: value === 'ALL' ? undefined : (value as MemberStatus) })
+			<AdminHeader title={'Members'} total={total} unit={total === 1 ? 'member' : 'members'} />
+
+			<div className={'admin-toolbar'}>
+				<AdminSegments
+					label={'Status'}
+					options={Object.values(MemberStatus)}
+					value={membersInquiry.search.memberStatus}
+					onChange={(memberStatus) =>
+						changeSearch({ ...membersInquiry.search, memberStatus: memberStatus as MemberStatus })
 					}
-				>
-					<Tab value={'ALL'} label={'All'} />
-					{Object.values(MemberStatus).map((status) => (
-						<Tab key={status} value={status} label={status} />
-					))}
-				</Tabs>
-				<Stack className={'toolbar-right'}>
-					<Tabs
-						value={membersInquiry.search.memberType ?? 'ALL'}
-						onChange={(_, value: string) =>
-							changeSearch({ ...membersInquiry.search, memberType: value === 'ALL' ? undefined : (value as MemberType) })
-						}
-					>
-						<Tab value={'ALL'} label={'Any type'} />
-						{Object.values(MemberType).map((type) => (
-							<Tab key={type} value={type} label={type} />
-						))}
-					</Tabs>
-					<TextField
-						size={'small'}
-						placeholder={'Search nick'}
-						value={text}
-						onChange={(e) => setText(e.target.value)}
-						onKeyDown={(e) => e.key === 'Enter' && changeSearch({ ...membersInquiry.search, text: text.trim() || undefined })}
-					/>
-				</Stack>
-			</Stack>
+				/>
+				<AdminSegments
+					label={'Type'}
+					options={Object.values(MemberType)}
+					value={membersInquiry.search.memberType}
+					allLabel={'Any type'}
+					onChange={(memberType) => changeSearch({ ...membersInquiry.search, memberType: memberType as MemberType })}
+				/>
+				<AdminSearch
+					placeholder={'Search by nickname'}
+					onSearch={(text) => changeSearch({ ...membersInquiry.search, text })}
+				/>
+			</div>
 
 			{members.length ? <MemberList members={members} updateMemberHandler={updateMemberHandler} /> : <NoData />}
 
-			<TablePagination
-				component={'div'}
-				count={total}
-				page={membersInquiry.page - 1}
-				rowsPerPage={membersInquiry.limit}
-				rowsPerPageOptions={[10, 20, 50]}
-				onPageChange={(_, page: number) => setMembersInquiry({ ...membersInquiry, page: page + 1 })}
-				onRowsPerPageChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setMembersInquiry({ ...membersInquiry, page: 1, limit: parseInt(e.target.value, 10) })
-				}
+			<AdminPager
+				page={membersInquiry.page}
+				limit={membersInquiry.limit}
+				total={total}
+				onPage={(page) => setMembersInquiry({ ...membersInquiry, page })}
 			/>
 		</Stack>
 	);

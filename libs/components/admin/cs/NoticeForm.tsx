@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, MenuItem, Stack, TextField } from '@mui/material';
+import { MenuItem, Stack, TextField } from '@mui/material';
+import { adminLabel } from '../common/adminLabels';
 import { Notice, NoticeInput } from '../../../types/notice/notice';
 import { NoticeCategory, NoticeStatus } from '../../../enums/notice.enum';
 
@@ -23,7 +24,8 @@ const NoticeForm = ({ notice, onSubmit, onCancel }: NoticeFormProps) => {
 	const isEvent = form.noticeCategory === NoticeCategory.EVENT;
 
 	return (
-		<Stack className={'notice-form'}>
+		<Stack className={'notice-form'} component={'section'} aria-label={notice ? 'Edit notice' : 'New notice'}>
+			<h2>{notice ? 'Edit notice' : 'New notice'}</h2>
 			<Stack className={'form-grid'}>
 				<TextField
 					select
@@ -33,7 +35,7 @@ const NoticeForm = ({ notice, onSubmit, onCancel }: NoticeFormProps) => {
 				>
 					{Object.values(NoticeCategory).map((category) => (
 						<MenuItem key={category} value={category}>
-							{category}
+							{adminLabel(category)}
 						</MenuItem>
 					))}
 				</TextField>
@@ -45,7 +47,7 @@ const NoticeForm = ({ notice, onSubmit, onCancel }: NoticeFormProps) => {
 				>
 					{Object.values(NoticeStatus).map((status) => (
 						<MenuItem key={status} value={status}>
-							{status}
+							{adminLabel(status)}
 						</MenuItem>
 					))}
 				</TextField>
@@ -83,16 +85,19 @@ const NoticeForm = ({ notice, onSubmit, onCancel }: NoticeFormProps) => {
 				fullWidth
 			/>
 			<Stack className={'form-actions'}>
-				<Button variant={'outlined'} onClick={onCancel}>
+				<button type={'button'} className={'admin-secondary'} onClick={onCancel}>
 					Cancel
-				</Button>
-				<Button
-					variant={'contained'}
+				</button>
+				<button
+					type={'button'}
+					className={'admin-primary'}
 					disabled={!form.noticeTitle.trim() || !form.noticeContent.trim()}
-					onClick={() => onSubmit({ ...form, noticeTitle: form.noticeTitle.trim(), noticeContent: form.noticeContent.trim() })}
+					onClick={() =>
+						onSubmit({ ...form, noticeTitle: form.noticeTitle.trim(), noticeContent: form.noticeContent.trim() })
+					}
 				>
-					{notice ? 'Save' : 'Create'}
-				</Button>
+					{notice ? 'Save changes' : 'Publish notice'}
+				</button>
 			</Stack>
 		</Stack>
 	);

@@ -1,131 +1,614 @@
+/* ---------- Compass Admin: the store's own colours, quiet and dense ---------- */
+
+$admin-menu-width: 248px;
+$tone-ok: #2f8f5b;
+$tone-warn: $oak;
+$tone-bad: $danger;
+
 .admin-loading {
+	display: flex;
 	min-height: 100vh;
 	align-items: center;
 	justify-content: center;
+	color: $muted;
 }
 
 #admin-wrap {
-	display: flex;
+	display: grid;
+	grid-template-columns: $admin-menu-width minmax(0, 1fr);
 	min-height: 100vh;
-	background: $paper;
-	.admin-menu {
-		width: 240px;
-		flex-shrink: 0;
+	background: $white;
+	@include tablet {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* ---------- side menu ---------- */
+.admin-menu {
+	position: sticky;
+	top: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+	height: 100vh;
+	padding: 24px 16px 20px;
+	background: $soft;
+	border-right: 1px solid $line;
+
+	.admin-brand {
 		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		padding: 20px 14px;
-		background: $ink-dark;
-		color: $white;
-		.logo img {
-			height: 28px;
-			width: auto;
-			filter: brightness(0) invert(1);
-		}
-		.admin-badge {
-			align-self: flex-start;
-			padding: 2px 8px;
-			border-radius: 6px;
-			background: $oak;
-			font-size: 11px;
+		align-items: center;
+		gap: 10px;
+		padding: 0 8px;
+		> span {
+			padding: 3px 9px;
+			border-radius: 999px;
+			background: $white;
+			border: 1px solid $line;
+			color: $muted;
+			font-size: 12px;
 			font-weight: 700;
 		}
-		nav {
+		.brand-logo span {
+			font-size: 21px;
+		}
+	}
+
+	nav {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		a {
+			position: relative;
 			display: flex;
-			flex-direction: column;
-			gap: 2px;
-			margin-top: 12px;
-			a {
-				display: flex;
-				align-items: center;
-				gap: 10px;
-				padding: 10px 12px;
-				border-radius: $radius-sm;
-				color: rgba(255, 255, 255, 0.75);
-				font-size: 14px;
-				&:hover {
-					background: rgba(255, 255, 255, 0.08);
+			align-items: center;
+			gap: 12px;
+			height: 44px;
+			padding: 0 12px;
+			border-radius: $radius-sm;
+			color: $ink-2;
+			font-size: 15px;
+			font-weight: 600;
+			transition: background 0.15s;
+			svg {
+				font-size: 21px;
+				color: $muted;
+			}
+			&:hover {
+				background: rgba($white, 0.7);
+			}
+			&.active {
+				background: $white;
+				color: $ink;
+				box-shadow: 0 1px 2px rgba(20, 20, 20, 0.06);
+				svg {
+					color: $oak;
 				}
-				&.active {
-					background: rgba(255, 255, 255, 0.14);
-					color: $white;
-					font-weight: 600;
-				}
+			}
+			&:focus-visible {
+				outline: 2px solid $ink;
+				outline-offset: 2px;
 			}
 		}
 	}
-	.admin-body {
-		flex: 1;
-		min-width: 0;
-	}
-	.admin-appbar {
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		height: 60px;
-		padding: 0 24px;
-		background: $white;
-		border-bottom: 1px solid $line;
-		strong {
-			font-family: $font-display;
-			font-size: 20px;
-		}
-		.admin-user {
-			flex-direction: row;
+
+	.admin-foot {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-top: auto;
+		.back-link {
+			display: flex;
 			align-items: center;
 			gap: 10px;
+			padding: 0 12px;
+			color: $muted;
 			font-size: 14px;
+			font-weight: 600;
+			svg {
+				font-size: 19px;
+			}
+			&:hover {
+				color: $ink;
+			}
 		}
 	}
-	.admin-content {
-		padding: 24px;
+
+	.admin-user {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 10px 8px 10px 12px;
+		border-radius: $radius;
+		background: $white;
+		border: 1px solid $line;
+		.MuiAvatar-root {
+			width: 32px;
+			height: 32px;
+		}
+		strong {
+			flex: 1;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-size: 14px;
+		}
+		button {
+			display: grid;
+			place-items: center;
+			width: 34px;
+			height: 34px;
+			border: 0;
+			border-radius: 50%;
+			background: transparent;
+			color: $muted;
+			cursor: pointer;
+			svg {
+				font-size: 19px;
+			}
+			&:hover {
+				background: $soft;
+				color: $ink;
+			}
+		}
+	}
+
+	/* narrow screens: the menu becomes a bar above the page (brand + account, then the sections) */
+	@include tablet {
+		position: static;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 14px 12px;
+		height: auto;
+		padding: 14px 16px 12px;
+		border-right: 0;
+		border-bottom: 1px solid $line;
+		.admin-brand {
+			padding: 0;
+		}
+		nav {
+			grid-row: 2;
+			grid-column: 1 / -1;
+			flex-direction: row;
+			overflow-x: auto;
+			margin: 0 -4px;
+			a {
+				height: 38px;
+				white-space: nowrap;
+			}
+		}
+		.admin-foot {
+			grid-row: 1;
+			grid-column: 2;
+			flex-direction: row;
+			align-items: center;
+			gap: 4px;
+			margin: 0;
+			.back-link {
+				padding: 0 8px;
+				span {
+					display: none;
+				}
+			}
+		}
+		.admin-user {
+			gap: 2px;
+			padding: 3px;
+			border: 0;
+			background: transparent;
+			strong {
+				display: none;
+			}
+		}
+	}
+}
+
+/* ---------- page ---------- */
+.admin-main {
+	min-width: 0;
+	padding: 36px 44px 64px;
+	@include tablet {
+		padding: 24px 20px 48px;
 	}
 }
 
 .admin-page {
+	gap: 24px;
+	max-width: 1320px;
+}
+
+.admin-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
 	gap: 16px;
-	padding: 20px;
-	background: $white;
-	border: 1px solid $line;
-	border-radius: $radius;
-	.admin-toolbar {
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-		flex-wrap: wrap;
-		.toolbar-right {
-			flex-direction: row;
-			align-items: center;
-			gap: 12px;
+	> div {
+		display: flex;
+		align-items: baseline;
+		gap: 14px;
+	}
+	h1 {
+		font-family: $font-serif;
+		font-weight: 500;
+		font-size: 40px;
+		line-height: 1.05;
+		letter-spacing: -0.025em;
+		font-variation-settings:
+			'SOFT' 100,
+			'opsz' 72;
+		@include mobile {
+			font-size: 32px;
 		}
 	}
-	.notice-form {
-		padding: 16px;
-		border-radius: $radius;
-		background: $paper;
+	span {
+		color: $muted;
+		font-size: 15px;
 	}
 }
 
-.admin-table {
-	th {
-		font-weight: 600;
-		color: $muted;
-		white-space: nowrap;
+.admin-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px;
+	.admin-search {
+		margin-left: auto;
+		@include mobile {
+			width: 100%;
+			margin-left: 0;
+		}
 	}
-	.cell-member,
-	.cell-product {
-		display: flex;
-		align-items: center;
-		gap: 8px;
+}
+
+/* pill filter group */
+.admin-segments {
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	border-radius: 999px;
+	background: $soft;
+	max-width: 100%;
+	overflow-x: auto;
+	button {
+		height: 34px;
+		padding: 0 15px;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: $muted;
+		font-size: 14px;
+		font-weight: 600;
+		white-space: nowrap;
+		cursor: pointer;
 		&:hover {
 			color: $ink;
 		}
+		&.active {
+			background: $white;
+			color: $ink;
+			box-shadow: 0 1px 3px rgba(20, 20, 20, 0.1);
+		}
+		&:focus-visible {
+			outline: 2px solid $ink;
+			outline-offset: 1px;
+		}
 	}
-	.cell-product img {
+}
+
+.admin-search {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 280px;
+	height: 40px;
+	padding: 0 8px 0 14px;
+	border: 1px solid $line;
+	border-radius: 999px;
+	background: $white;
+	transition: border-color 0.15s;
+	&:focus-within {
+		border-color: $ink;
+	}
+	> svg {
+		font-size: 20px;
+		color: $faint;
+	}
+	input {
+		flex: 1;
+		min-width: 0;
+		border: 0;
+		outline: 0;
+		background: transparent;
+		font-size: 14px;
+		color: $ink;
+		&::placeholder {
+			color: $faint;
+		}
+	}
+	button {
+		display: grid;
+		place-items: center;
+		width: 26px;
+		height: 26px;
+		border: 0;
+		border-radius: 50%;
+		background: $soft;
+		color: $muted;
+		cursor: pointer;
+		svg {
+			font-size: 16px;
+		}
+	}
+}
+
+/* ---------- table ---------- */
+.admin-table {
+	.MuiTableCell-root {
+		padding: 14px 12px;
+		border-bottom: 1px solid $line;
+		font-family: $font;
+		font-size: 14px;
+		color: $ink-2;
+		font-variant-numeric: tabular-nums;
+	}
+	.MuiTableHead-root .MuiTableCell-root {
+		padding-top: 10px;
+		padding-bottom: 10px;
+		color: $muted;
+		font-size: 13px;
+		font-weight: 600;
+		white-space: nowrap;
+		border-bottom-color: $line;
+	}
+	.MuiTableBody-root .MuiTableRow-root {
+		transition: background 0.12s;
+		&:hover {
+			background: #fbfaf8;
+		}
+		&:last-child .MuiTableCell-root {
+			border-bottom: 0;
+		}
+	}
+	.cell-muted {
+		color: $muted;
+		white-space: nowrap;
+	}
+	.cell-strong {
+		font-weight: 700;
+		color: $ink;
+		white-space: nowrap;
+	}
+
+	/* first column: picture + name + one muted line */
+	.cell-main {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		min-width: 200px;
+		img,
+		.MuiAvatar-root {
+			flex-shrink: 0;
+			width: 40px;
+			height: 40px;
+			border-radius: $radius-sm;
+			object-fit: cover;
+			background: $soft;
+		}
+		.MuiAvatar-root {
+			border-radius: 50%;
+		}
+		> span {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 0;
+		}
+		strong {
+			font-weight: 700;
+			color: $ink;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 340px;
+		}
+		small {
+			color: $muted;
+			font-size: 13px;
+		}
+	}
+	a.cell-main:hover strong {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.row-action {
+		height: 32px;
+		padding: 0 12px;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: $ink-2;
+		font-size: 13px;
+		font-weight: 700;
+		white-space: nowrap;
+		cursor: pointer;
+		&:hover {
+			background: $soft;
+		}
+		&.danger {
+			color: $danger;
+			&:hover {
+				background: rgba($danger, 0.08);
+			}
+		}
+	}
+
+	/* the table scrolls sideways on small screens instead of squeezing */
+	@include tablet {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	}
+}
+
+/* status: dot + word, also used inside the inline select */
+.status-value {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	color: $ink-2;
+	white-space: nowrap;
+	.dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: $faint;
+		&.ok {
+			background: $tone-ok;
+		}
+		&.warn {
+			background: $tone-warn;
+		}
+		&.bad {
+			background: $tone-bad;
+		}
+	}
+}
+
+.status-select.MuiInputBase-root {
+	height: 34px;
+	padding: 0 4px 0 12px;
+	border: 1px solid $line;
+	border-radius: 999px;
+	background: $white;
+	font-family: $font;
+	transition: border-color 0.15s;
+	&:hover {
+		border-color: $faint;
+	}
+	&.Mui-focused {
+		border-color: $ink;
+	}
+	&.Mui-disabled {
+		background: $soft;
+		opacity: 0.7;
+	}
+	.MuiSelect-select {
+		padding: 0 24px 0 0 !important;
+		background: transparent !important;
+	}
+	.MuiSvgIcon-root {
+		right: 6px;
+		color: $muted;
+		font-size: 20px;
+	}
+}
+.status-menu.MuiPaper-root {
+	margin-top: 6px;
+	border-radius: $radius-sm;
+	box-shadow: $shadow;
+	.MuiMenuItem-root {
+		min-height: 38px;
+	}
+}
+
+.admin-pager {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	span {
+		margin-right: 8px;
+		color: $muted;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+	button {
+		display: grid;
+		place-items: center;
 		width: 36px;
 		height: 36px;
-		border-radius: 6px;
-		object-fit: cover;
+		border: 1px solid $line;
+		border-radius: 50%;
+		background: $white;
+		color: $ink;
+		cursor: pointer;
+		&:hover:not(:disabled) {
+			border-color: $ink;
+		}
+		&:disabled {
+			color: $faint;
+			cursor: default;
+		}
+	}
+}
+
+/* ---------- buttons and the notice form ---------- */
+.admin-primary,
+.admin-secondary {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 42px;
+	padding: 0 20px;
+	border-radius: 999px;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+	svg {
+		font-size: 20px;
+	}
+}
+.admin-primary {
+	border: 0;
+	background: $ink;
+	color: $white;
+	&:hover:not(:disabled) {
+		background: $ink-dark;
+	}
+	&:disabled {
+		background: $faint;
+		cursor: default;
+	}
+}
+.admin-secondary {
+	border: 1px solid $line;
+	background: $white;
+	color: $ink;
+	&:hover {
+		border-color: $ink;
+	}
+}
+
+.notice-form {
+	gap: 16px;
+	padding: 24px;
+	border-radius: $radius-lg;
+	background: $soft;
+	h2 {
+		font-family: $font-serif;
+		font-weight: 500;
+		font-size: 26px;
+	}
+	.form-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+		@include mobile {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+	.MuiOutlinedInput-root {
+		background: $white;
+		border-radius: $radius-sm;
+	}
+	.form-actions {
+		flex-direction: row;
+		justify-content: flex-end;
+		gap: 10px;
 	}
 }

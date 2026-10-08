@@ -1,22 +1,16 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import moment from 'moment';
 import { useMutation, useQuery } from '@apollo/client';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import {
-	Button,
-	Stack,
-	Tab,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TablePagination,
-	TableRow,
-	Tabs,
-} from '@mui/material';
+import { Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import withAdminLayout from '../../../libs/components/layout/LayoutAdmin';
 import NoticeForm from '../../../libs/components/admin/cs/NoticeForm';
+import AdminHeader from '../../../libs/components/admin/common/AdminHeader';
+import AdminSegments from '../../../libs/components/admin/common/AdminSegments';
+import AdminPager from '../../../libs/components/admin/common/AdminPager';
+import { adminLabel, statusTone } from '../../../libs/components/admin/common/adminLabels';
 import NoData from '../../../libs/components/common/NoData';
 import { GET_ALL_NOTICES_BY_ADMIN } from '../../../apollo/admin/query';
 import { CREATE_NOTICE, REMOVE_NOTICE, UPDATE_NOTICE } from '../../../apollo/admin/mutation';
@@ -30,7 +24,13 @@ export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
 });
 
-const initialInquiry: AllNoticesInquiry = { page: 1, limit: 20, sort: 'createdAt', direction: Direction.DESC, search: {} };
+const initialInquiry: AllNoticesInquiry = {
+	page: 1,
+	limit: 20,
+	sort: 'createdAt',
+	direction: Direction.DESC,
+	search: {},
+};
 
 const AdminCs: NextPage = () => {
 	const [noticesInquiry, setNoticesInquiry] = useState<AllNoticesInquiry>(initialInquiry);
@@ -83,10 +83,10 @@ const AdminCs: NextPage = () => {
 	const deleteNoticeHandler = async (notice: Notice) => {
 		try {
 			if (notice.noticeStatus !== NoticeStatus.DELETE) {
-				if (!(await sweetConfirmAlert('Move this notice to DELETE?'))) return;
+				if (!(await sweetConfirmAlert('Hide this notice?'))) return;
 				await updateNotice({ variables: { input: { _id: notice._id, noticeStatus: NoticeStatus.DELETE } } });
 			} else {
-				if (!(await sweetConfirmAlert('Permanently remove this notice?'))) return;
+				if (!(await sweetConfirmAlert('Remove this notice for good? This cannot be undone.'))) return;
 				await removeNotice({ variables: { input: notice._id } });
 			}
 			await reload();
@@ -98,26 +98,19 @@ const AdminCs: NextPage = () => {
 
 	return (
 		<Stack id={'admin-cs-page'} className={'admin-page'}>
-			<Stack className={'admin-toolbar'}>
-				<Tabs
-					value={noticesInquiry.search.noticeCategory ?? 'ALL'}
-					onChange={(_, value: string) =>
-						setNoticesInquiry({
-							...noticesInquiry,
-							page: 1,
-							search: { ...noticesInquiry.search, noticeCategory: value === 'ALL' ? undefined : (value as NoticeCategory) },
-						})
-					}
-				>
-					<Tab value={'ALL'} label={'All'} />
-					{Object.values(NoticeCategory).map((category) => (
-						<Tab key={category} value={category} label={category} />
-					))}
-				</Tabs>
-				<Button variant={'contained'} onClick={() => openFormHandler(null)}>
-					New notice
-				</Button>
-			</Stack>
+			<AdminHeader
+				title={'Notices'}
+				total={total}
+				unit={total === 1 ? 'notice' : 'notices'}
+				action={
+					!formOpen && (
+						<button type={'button'} className={'admin-primary'} onClick={() => openFormHandler(null)}>
+							<AddRoundedIcon />
+							New notice
+						</button>
+					)
+				}
+			/>
 
 			{formOpen && (
 				<NoticeForm
@@ -128,12 +121,26 @@ const AdminCs: NextPage = () => {
 				/>
 			)}
 
+			<div className={'admin-toolbar'}>
+				<AdminSegments
+					label={'Category'}
+					options={Object.values(NoticeCategory)}
+					value={noticesInquiry.search.noticeCategory}
+					onChange={(noticeCategory) =>
+						setNoticesInquiry({
+							...noticesInquiry,
+							page: 1,
+							search: { ...noticesInquiry.search, noticeCategory: noticeCategory as NoticeCategory },
+						})
+					}
+				/>
+			</div>
+
 			{notices.length ? (
-				<Table size={'small'} className={'admin-table'}>
+				<Table className={'admin-table'}>
 					<TableHead>
 						<TableRow>
-							<TableCell>Title</TableCell>
-							<TableCell>Category</TableCell>
+							<TableCell>Notice</TableCell>
 							<TableCell>Status</TableCell>
 							<TableCell>Created</TableCell>
 							<TableCell />
@@ -141,18 +148,29 @@ const AdminCs: NextPage = () => {
 					</TableHead>
 					<TableBody>
 						{notices.map((notice) => (
-							<TableRow key={notice._id} hover>
-								<TableCell>{notice.noticeTitle}</TableCell>
-								<TableCell>{notice.noticeCategory}</TableCell>
-								<TableCell>{notice.noticeStatus}</TableCell>
-								<TableCell>{moment(notice.createdAt).format('YYYY.MM.DD')}</TableCell>
+							<TableRow key={notice._id}>
+								<TableCell>
+									<span className={'cell-main'}>
+										<span>
+											<strong>{notice.noticeTitle}</strong>
+											<small>{adminLabel(notice.noticeCategory)}</small>
+										</span>
+									</span>
+								</TableCell>
+								<TableCell>
+									<span className={'status-value'}>
+										<i className={`dot ${statusTone(notice.noticeStatus)}`} />
+										{adminLabel(notice.noticeStatus)}
+									</span>
+								</TableCell>
+								<TableCell className={'cell-muted'}>{moment(notice.createdAt).format('YYYY.MM.DD')}</TableCell>
 								<TableCell align={'right'}>
-									<Button size={'small'} onClick={() => openFormHandler(notice)}>
+									<button type={'button'} className={'row-action'} onClick={() => openFormHandler(notice)}>
 										Edit
-									</Button>
-									<Button size={'small'} color={'error'} onClick={() => deleteNoticeHandler(notice)}>
-										{notice.noticeStatus === NoticeStatus.DELETE ? 'Remove' : 'Delete'}
-									</Button>
+									</button>
+									<button type={'button'} className={'row-action danger'} onClick={() => deleteNoticeHandler(notice)}>
+										{notice.noticeStatus === NoticeStatus.DELETE ? 'Remove for good' : 'Delete'}
+									</button>
 								</TableCell>
 							</TableRow>
 						))}
@@ -162,16 +180,11 @@ const AdminCs: NextPage = () => {
 				<NoData />
 			)}
 
-			<TablePagination
-				component={'div'}
-				count={total}
-				page={noticesInquiry.page - 1}
-				rowsPerPage={noticesInquiry.limit}
-				rowsPerPageOptions={[10, 20, 50]}
-				onPageChange={(_, page: number) => setNoticesInquiry({ ...noticesInquiry, page: page + 1 })}
-				onRowsPerPageChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setNoticesInquiry({ ...noticesInquiry, page: 1, limit: parseInt(e.target.value, 10) })
-				}
+			<AdminPager
+				page={noticesInquiry.page}
+				limit={noticesInquiry.limit}
+				total={total}
+				onPage={(page) => setNoticesInquiry({ ...noticesInquiry, page })}
 			/>
 		</Stack>
 	);

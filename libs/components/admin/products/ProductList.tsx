@@ -1,10 +1,12 @@
 import Link from 'next/link';
 import moment from 'moment';
-import { Button, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Product } from '../../../types/product/product';
 import { ProductStatus } from '../../../enums/product.enum';
 import { DEFAULT_PRODUCT_IMAGE, imageUrl } from '../../../config';
 import { formatPrice } from '../../../utils';
+import StatusSelect from '../common/StatusSelect';
+import { adminLabel } from '../common/adminLabels';
 
 interface ProductListProps {
 	products: Product[];
@@ -14,12 +16,11 @@ interface ProductListProps {
 
 const ProductList = ({ products, updateProductHandler, removeProductHandler }: ProductListProps) => {
 	return (
-		<Table size={'small'} className={'admin-table'}>
+		<Table className={'admin-table'}>
 			<TableHead>
 				<TableRow>
 					<TableCell>Product</TableCell>
 					<TableCell>Seller</TableCell>
-					<TableCell>Condition</TableCell>
 					<TableCell align={'right'}>Price</TableCell>
 					<TableCell>Location</TableCell>
 					<TableCell>Listed</TableCell>
@@ -29,37 +30,42 @@ const ProductList = ({ products, updateProductHandler, removeProductHandler }: P
 			</TableHead>
 			<TableBody>
 				{products.map((product) => (
-					<TableRow key={product._id} hover>
+					<TableRow key={product._id}>
 						<TableCell>
-							<Link href={{ pathname: '/product/detail', query: { id: product._id } }} className={'cell-product'}>
+							<Link href={{ pathname: '/product/detail', query: { id: product._id } }} className={'cell-main'}>
 								<img src={imageUrl(product.productImages?.[0], DEFAULT_PRODUCT_IMAGE)} alt={''} />
-								{product.productTitle}
+								<span>
+									<strong>{product.productTitle}</strong>
+									<small>
+										{adminLabel(product.productCondition)} · {adminLabel(product.productType)}
+									</small>
+								</span>
 							</Link>
 						</TableCell>
 						<TableCell>{product.memberData?.memberNick}</TableCell>
-						<TableCell>{product.productCondition}</TableCell>
-						<TableCell align={'right'}>{formatPrice(product.productPrice)}</TableCell>
-						<TableCell>{product.productLocation}</TableCell>
-						<TableCell>{moment(product.createdAt).format('YYYY.MM.DD')}</TableCell>
-						<TableCell>
-							<Select
-								size={'small'}
-								value={product.productStatus}
-								disabled={product.productStatus === ProductStatus.DELETE}
-								onChange={(e) => updateProductHandler(product._id, e.target.value as ProductStatus)}
-							>
-								{Object.values(ProductStatus).map((status) => (
-									<MenuItem key={status} value={status}>
-										{status}
-									</MenuItem>
-								))}
-							</Select>
+						<TableCell align={'right'} className={'cell-strong'}>
+							{formatPrice(product.productSalePrice || product.productPrice)}
 						</TableCell>
+						<TableCell className={'cell-muted'}>{adminLabel(product.productLocation)}</TableCell>
+						<TableCell className={'cell-muted'}>{moment(product.createdAt).format('YYYY.MM.DD')}</TableCell>
 						<TableCell>
+							<StatusSelect
+								label={`Status of ${product.productTitle}`}
+								value={product.productStatus}
+								options={Object.values(ProductStatus)}
+								disabled={product.productStatus === ProductStatus.DELETE}
+								onChange={(status) => updateProductHandler(product._id, status)}
+							/>
+						</TableCell>
+						<TableCell align={'right'}>
 							{product.productStatus === ProductStatus.DELETE && (
-								<Button size={'small'} color={'error'} onClick={() => removeProductHandler(product._id)}>
-									Remove
-								</Button>
+								<button
+									type={'button'}
+									className={'row-action danger'}
+									onClick={() => removeProductHandler(product._id)}
+								>
+									Remove for good
+								</button>
 							)}
 						</TableCell>
 					</TableRow>

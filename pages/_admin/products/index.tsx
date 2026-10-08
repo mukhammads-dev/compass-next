@@ -1,10 +1,14 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Stack, Tab, TablePagination, Tabs, TextField } from '@mui/material';
+import { Stack } from '@mui/material';
 import withAdminLayout from '../../../libs/components/layout/LayoutAdmin';
 import ProductList from '../../../libs/components/admin/products/ProductList';
+import AdminHeader from '../../../libs/components/admin/common/AdminHeader';
+import AdminSegments from '../../../libs/components/admin/common/AdminSegments';
+import AdminSearch from '../../../libs/components/admin/common/AdminSearch';
+import AdminPager from '../../../libs/components/admin/common/AdminPager';
 import NoData from '../../../libs/components/common/NoData';
 import { GET_ALL_PRODUCTS_BY_ADMIN } from '../../../apollo/admin/query';
 import { REMOVE_PRODUCT_BY_ADMIN, UPDATE_PRODUCT_BY_ADMIN } from '../../../apollo/admin/mutation';
@@ -19,13 +23,18 @@ export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
 });
 
-const initialInquiry: AllProductsInquiry = { page: 1, limit: 20, sort: 'createdAt', direction: Direction.DESC, search: {} };
+const initialInquiry: AllProductsInquiry = {
+	page: 1,
+	limit: 20,
+	sort: 'createdAt',
+	direction: Direction.DESC,
+	search: {},
+};
 
 const AdminProducts: NextPage = () => {
 	const [productsInquiry, setProductsInquiry] = useState<AllProductsInquiry>(initialInquiry);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [total, setTotal] = useState<number>(0);
-	const [text, setText] = useState<string>('');
 
 	/** APOLLO REQUESTS **/
 	const [updateProductByAdmin] = useMutation(UPDATE_PRODUCT_BY_ADMIN);
@@ -50,7 +59,8 @@ const AdminProducts: NextPage = () => {
 
 	const updateProductHandler = async (id: string, productStatus: ProductStatus) => {
 		try {
-			if (productStatus === ProductStatus.DELETE && !(await sweetConfirmAlert('Soft-delete this product?'))) return;
+			if (productStatus === ProductStatus.DELETE && !(await sweetConfirmAlert('Hide this product from the store?')))
+				return;
 			await updateProductByAdmin({ variables: { input: { _id: id, productStatus } } });
 			await reload();
 			await sweetTopSmallSuccessAlert('Updated', 800);
@@ -71,39 +81,27 @@ const AdminProducts: NextPage = () => {
 		}
 	};
 
+	const changeSearch = (search: AllProductsInquiry['search']) =>
+		setProductsInquiry({ ...productsInquiry, page: 1, search });
+
 	return (
 		<Stack id={'admin-products-page'} className={'admin-page'}>
-			<Stack className={'admin-toolbar'}>
-				<Tabs
-					value={productsInquiry.search.productStatus ?? 'ALL'}
-					onChange={(_, value: string) =>
-						setProductsInquiry({
-							...productsInquiry,
-							page: 1,
-							search: { ...productsInquiry.search, productStatus: value === 'ALL' ? undefined : (value as ProductStatus) },
-						})
-					}
-				>
-					<Tab value={'ALL'} label={'All'} />
-					{Object.values(ProductStatus).map((status) => (
-						<Tab key={status} value={status} label={status} />
-					))}
-				</Tabs>
-				<TextField
-					size={'small'}
-					placeholder={'Search title'}
-					value={text}
-					onChange={(e) => setText(e.target.value)}
-					onKeyDown={(e) =>
-						e.key === 'Enter' &&
-						setProductsInquiry({
-							...productsInquiry,
-							page: 1,
-							search: { ...productsInquiry.search, text: text.trim() || undefined },
-						})
+			<AdminHeader title={'Products'} total={total} unit={total === 1 ? 'product' : 'products'} />
+
+			<div className={'admin-toolbar'}>
+				<AdminSegments
+					label={'Status'}
+					options={Object.values(ProductStatus)}
+					value={productsInquiry.search.productStatus}
+					onChange={(productStatus) =>
+						changeSearch({ ...productsInquiry.search, productStatus: productStatus as ProductStatus })
 					}
 				/>
-			</Stack>
+				<AdminSearch
+					placeholder={'Search by title'}
+					onSearch={(text) => changeSearch({ ...productsInquiry.search, text })}
+				/>
+			</div>
 
 			{products.length ? (
 				<ProductList
@@ -115,16 +113,11 @@ const AdminProducts: NextPage = () => {
 				<NoData />
 			)}
 
-			<TablePagination
-				component={'div'}
-				count={total}
-				page={productsInquiry.page - 1}
-				rowsPerPage={productsInquiry.limit}
-				rowsPerPageOptions={[10, 20, 50]}
-				onPageChange={(_, page: number) => setProductsInquiry({ ...productsInquiry, page: page + 1 })}
-				onRowsPerPageChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setProductsInquiry({ ...productsInquiry, page: 1, limit: parseInt(e.target.value, 10) })
-				}
+			<AdminPager
+				page={productsInquiry.page}
+				limit={productsInquiry.limit}
+				total={total}
+				onPage={(page) => setProductsInquiry({ ...productsInquiry, page })}
 			/>
 		</Stack>
 	);
