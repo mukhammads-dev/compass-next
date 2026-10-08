@@ -7,10 +7,24 @@ import { LensResult } from './types/lens/lens';
 
 type UploadTarget = 'member' | 'product' | 'article' | 'my-room';
 
-const headers = () => ({
-	'apollo-require-preflight': true,
-	Authorization: `Bearer ${getJwtToken()}`,
-});
+/**
+ * Posts a GraphQL multipart request and returns its `data`.
+ * The server's own message is surfaced: GraphQL errors can arrive with HTTP 400, which axios would
+ * otherwise report as "Request failed with status code 400".
+ */
+const postMultipart = async (formData: FormData): Promise<any> => {
+	const token = getJwtToken();
+	try {
+		const response = await axios.post(REACT_APP_API_GRAPHQL_URL, formData, {
+			headers: { 'apollo-require-preflight': true, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+		});
+		if (response.data?.errors?.length) throw new Error(response.data.errors[0].message);
+		return response.data.data;
+	} catch (err: any) {
+		const message = err.response?.data?.errors?.[0]?.message;
+		throw message ? new Error(message) : err;
+	}
+};
 
 /** Uploads one image through the GraphQL multipart spec. Returns the stored path ("uploads/..."). */
 export const uploadImage = async (file: File, target: UploadTarget): Promise<string> => {
@@ -25,9 +39,7 @@ export const uploadImage = async (file: File, target: UploadTarget): Promise<str
 	formData.append('map', JSON.stringify({ '0': ['variables.file'] }));
 	formData.append('0', file);
 
-	const response = await axios.post(REACT_APP_API_GRAPHQL_URL, formData, { headers: headers() });
-	if (response.data?.errors?.length) throw new Error(response.data.errors[0].message);
-	return response.data.data.imageUploader;
+	return (await postMultipart(formData)).imageUploader;
 };
 
 /** Uploads several images in one request, keeping their order. */
@@ -46,9 +58,7 @@ export const uploadImages = async (files: File[], target: UploadTarget): Promise
 	formData.append('map', JSON.stringify(map));
 	files.forEach((file, index) => formData.append(String(index), file));
 
-	const response = await axios.post(REACT_APP_API_GRAPHQL_URL, formData, { headers: headers() });
-	if (response.data?.errors?.length) throw new Error(response.data.errors[0].message);
-	return response.data.data.imagesUploader;
+	return (await postMultipart(formData)).imagesUploader;
 };
 
 /** Compass Lens: uploads a room photo and returns what was found in it. Works for guests too. */
@@ -58,10 +68,5 @@ export const searchPhoto = async (file: File): Promise<LensResult> => {
 	formData.append('map', JSON.stringify({ '0': ['variables.file'] }));
 	formData.append('0', file);
 
-	const token = getJwtToken();
-	const response = await axios.post(REACT_APP_API_GRAPHQL_URL, formData, {
-		headers: { 'apollo-require-preflight': true, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-	});
-	if (response.data?.errors?.length) throw new Error(response.data.errors[0].message);
-	return response.data.data.lensSearch;
+	return (await postMultipart(formData)).lensSearch;
 };
