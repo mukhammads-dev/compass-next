@@ -7,6 +7,9 @@ import useRestoreAuth from '../../hooks/useRestoreAuth';
 import Top from '../Top';
 import Footer from '../Footer';
 
+/** Pages that draw their own header instead of the banner. */
+const OWN_HEADER = ['/account/join', '/lens'];
+
 /** List pages: navbar + page banner (title from the route) + footer. */
 const withLayoutBasic = (Component: any) => {
 	const LayoutBasic = (props: any) => {
@@ -41,6 +44,10 @@ const withLayoutBasic = (Component: any) => {
 					title = 'Welcome to Compass';
 					desc = 'Login or create an account';
 					break;
+				case '/lens':
+					title = 'Compass Lens';
+					desc = '';
+					break;
 				case '/cs':
 					title = 'Customer Center';
 					desc = 'Notices, FAQ and events';
@@ -64,8 +71,7 @@ const withLayoutBasic = (Component: any) => {
 						<Top />
 					</Stack>
 
-					{/* the login card is its own header, so the banner is skipped there */}
-					{router.pathname !== '/account/join' && (
+					{!OWN_HEADER.includes(router.pathname) && (
 						<Stack className={'header-basic'}>
 							<Stack className={'container'}>
 								<strong>{t(memoizedValues.title)}</strong>
