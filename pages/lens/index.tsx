@@ -122,7 +122,7 @@ const Lens: NextPage = () => {
 		<Stack id={'lens-page'} className={dragging ? 'is-dragging' : ''} {...dropProps}>
 			<Stack className={'container'}>
 				<header className={'lens-head'}>
-					<h1>{photo ? t('Shop this room') : t('Shop your photo')}</h1>
+					<h1>{photo ? t('Furniture in your photo') : t('Find it from a photo')}</h1>
 					{photo && (
 						<button type={'button'} className={'btn-line'} onClick={open}>
 							{t('New photo')}
@@ -136,7 +136,7 @@ const Lens: NextPage = () => {
 						<button type={'button'} className={'lens-btn'} onClick={open}>
 							{t('Choose a photo')}
 						</button>
-						<span>{t('or drop or paste a room photo here')}</span>
+						<span>{t('or drag a photo of a room here')}</span>
 					</div>
 				) : (
 					<div className={'lens-layout'}>

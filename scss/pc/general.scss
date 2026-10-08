@@ -240,9 +240,8 @@
 			font-size: 60px;
 			line-height: 1.04;
 			letter-spacing: -0.045em;
-			em {
-				font-style: normal;
-				white-space: nowrap;
+			span {
+				display: block;
 			}
 		}
 		@include tablet {

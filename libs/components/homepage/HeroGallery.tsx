@@ -116,14 +116,15 @@ const HeroGallery = () => {
 		<Stack className={`header-main ${dragging ? 'is-dragging' : ''}`} {...dropProps}>
 			<Stack className={'container hero-head'}>
 				<h1>
-					{t('Real homes.')} <em>{t('Tap anything')}</em> {t('to shop it.')}
+					<span>{t('Fall for a room.')}</span>
+					<span>{t('Take its furniture home.')}</span>
 				</h1>
 				<div className={'lens-entry'}>
 					<button type={'button'} className={'lens-btn'} onClick={open}>
 						<CenterFocusWeakRoundedIcon />
-						{t('Shop your photo')}
+						{t('Find it from a photo')}
 					</button>
-					<span>{t('or drop a room photo here')}</span>
+					<span>{t('or drag a photo of a room here')}</span>
 					<input {...inputProps} />
 				</div>
 			</Stack>
@@ -132,7 +133,7 @@ const HeroGallery = () => {
 				<div className={'lens-drop-veil'} aria-hidden>
 					<span>
 						<CenterFocusWeakRoundedIcon />
-						{t('Drop the photo to shop it')}
+						{t('Drop the photo to search')}
 					</span>
 				</div>
 			)}
