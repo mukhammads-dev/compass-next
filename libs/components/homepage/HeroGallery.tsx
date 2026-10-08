@@ -100,7 +100,6 @@ const HeroGallery = () => {
 	return (
 		<Stack className={'header-main'}>
 			<Stack className={'container hero-head'}>
-				<span className={'eyebrow'}>{t('Room Tour · 집들이')}</span>
 				<h1>
 					{t('Real homes.')} <em>{t('Tap anything')}</em> {t('to shop it.')}
 				</h1>
