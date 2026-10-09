@@ -37,7 +37,13 @@ import { sweetMixinErrorAlert, sweetMixinSuccessAlert } from '../../sweetAlert';
 import { T } from '../../types/common';
 
 type NumberKey =
-	'productPrice' | 'productSalePrice' | 'productWidth' | 'productDepth' | 'productHeight' | 'productDeliveryFee';
+	| 'productPrice'
+	| 'productSalePrice'
+	| 'productWidth'
+	| 'productDepth'
+	| 'productHeight'
+	| 'productDeliveryFee'
+	| 'productStock';
 
 /** Won fields get thousand separators while they are not focused; cm fields stay bare. */
 const MONEY_KEYS: NumberKey[] = ['productPrice', 'productSalePrice', 'productDeliveryFee'];
@@ -49,6 +55,7 @@ const EMPTY_NUMBER_TEXT: Record<NumberKey, string> = {
 	productDepth: '',
 	productHeight: '',
 	productDeliveryFee: '',
+	productStock: '1',
 };
 
 const groupDigits = (digits: string) => (digits ? Number(digits).toLocaleString('en-US') : '');
@@ -72,6 +79,7 @@ const emptyProduct = (condition: ProductCondition): ProductInput => ({
 	productHeight: 0,
 	productColor: '',
 	productDeliveryFee: 0,
+	productStock: 1,
 	productAssembly: false,
 	productImages: [],
 	productDesc: '',
@@ -116,6 +124,7 @@ const AddProduct = () => {
 				productDepth: toNumberText(next.productDepth),
 				productHeight: toNumberText(next.productHeight),
 				productDeliveryFee: toNumberText(next.productDeliveryFee),
+				productStock: toNumberText(next.productStock),
 			});
 		},
 	});
@@ -295,6 +304,7 @@ const AddProduct = () => {
 						{number('productPrice', 'Price (₩)')}
 						{number('productSalePrice', 'Sale price (₩)')}
 						{number('productDeliveryFee', 'Delivery fee (₩)')}
+						{insertData.productCondition === ProductCondition.NEW && number('productStock', 'In stock (pieces)')}
 					</Stack>
 					<FormControlLabel
 						control={

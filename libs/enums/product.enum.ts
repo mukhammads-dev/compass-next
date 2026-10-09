@@ -1,4 +1,3 @@
-
 export enum ProductType {
 	FURNITURE = 'FURNITURE',
 	LIGHTING = 'LIGHTING',
@@ -48,6 +47,7 @@ export enum ProductCondition {
 
 export enum ProductStatus {
 	ACTIVE = 'ACTIVE',
+	RESERVED = 'RESERVED',
 	SOLD = 'SOLD',
 	DELETE = 'DELETE',
 }

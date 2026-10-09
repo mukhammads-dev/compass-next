@@ -8,7 +8,15 @@ import Top from '../Top';
 import Footer from '../Footer';
 
 /** Pages that draw their own header instead of the banner. */
-const OWN_HEADER = ['/account/join', '/lens'];
+const OWN_HEADER = [
+	'/account/join',
+	'/lens',
+	'/cart',
+	'/checkout',
+	'/checkout/reserve',
+	'/checkout/complete',
+	'/order',
+];
 
 /** List pages: navbar + page banner (title from the route) + footer. */
 const withLayoutBasic = (Component: any) => {
@@ -43,6 +51,17 @@ const withLayoutBasic = (Component: any) => {
 				case '/account/join':
 					title = 'Welcome to Compass';
 					desc = 'Login or create an account';
+					break;
+				case '/cart':
+					title = 'Cart';
+					break;
+				case '/checkout':
+				case '/checkout/reserve':
+				case '/checkout/complete':
+					title = 'Checkout';
+					break;
+				case '/order':
+					title = 'Order';
 					break;
 				case '/lens':
 					title = 'Compass Lens';

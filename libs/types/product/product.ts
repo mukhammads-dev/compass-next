@@ -27,6 +27,7 @@ export interface Product {
 	productDepth: number;
 	productHeight: number;
 	productColor: string;
+	productStock: number;
 	productDeliveryFee: number;
 	productAssembly: boolean;
 	productImages: string[];

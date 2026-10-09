@@ -48,6 +48,7 @@ export const PRODUCT_FIELDS = gql`
 		productDepth
 		productHeight
 		productColor
+		productStock
 		productDeliveryFee
 		productAssembly
 		productImages
@@ -120,5 +121,73 @@ export const MY_ROOM_FIELDS = gql`
 		myRoomImage
 		memberId
 		createdAt
+	}
+`;
+
+export const ORDER_FIELDS = gql`
+	fragment OrderFields on Order {
+		_id
+		orderNo
+		checkoutId
+		orderType
+		orderStatus
+		buyerId
+		buyerNick
+		sellerId
+		sellerNick
+		sellerImage
+		items {
+			productId
+			productTitle
+			productImage
+			productWidth
+			productDepth
+			productHeight
+			unitPrice
+			quantity
+			assembly
+			assemblyFee
+		}
+		itemsTotal
+		deliveryFee
+		assemblyTotal
+		stairsFee
+		orderTotal
+		delivery {
+			recipient
+			phone
+			address
+			addressDetail
+			postalCode
+			floor
+			elevator
+			preferredDate
+			memo
+		}
+		meetup {
+			meetupDate
+			meetupPlace
+			note
+		}
+		payment {
+			method
+			amount
+			approvalNo
+			cardBrand
+			cardLast4
+			paidAt
+			refundedAt
+		}
+		sellerNote
+		cancelReason
+		canceledBy
+		history {
+			status
+			actor
+			note
+			at
+		}
+		createdAt
+		updatedAt
 	}
 `;

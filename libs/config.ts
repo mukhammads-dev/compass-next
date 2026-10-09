@@ -39,6 +39,16 @@ export const MAX_ROOM_TOUR_IMAGES = 10;
 export const MAX_PRODUCT_IMAGES = 10;
 export const MAX_ACTIVE_USED_LISTINGS = 5;
 
+/* ---- cart & orders (mirror backend config) ---- */
+export const MAX_ITEM_QUANTITY = 10;
+export const ASSEMBLY_FEE = 30_000;
+export const STAIRS_FREE_FLOORS = 2;
+export const STAIRS_FEE_PER_FLOOR = 10_000;
+export const MEETUP_MAX_DAYS = 14;
+/** simulated payment: shown on the checkout so anyone can try both outcomes */
+export const TEST_CARD = '4242 4242 4242 4242';
+export const TEST_DECLINED_CARD = '4000 0000 0000 0002';
+
 /* ---- Compass Lens ---- */
 export const LENS_MAX_PHOTO_BYTES = 15_000_000; // same as the API upload limit
 export const LENS_TAP_SIZE = 0.3; // a tapped spot searches a square this share of the photo

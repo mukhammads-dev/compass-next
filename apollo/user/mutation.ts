@@ -1,5 +1,12 @@
 import { gql } from '@apollo/client';
-import { ARTICLE_FIELDS, MEMBER_FIELDS, MY_ROOM_FIELDS, OWNER_FIELDS, PRODUCT_FIELDS } from '../fragments';
+import {
+	ARTICLE_FIELDS,
+	MEMBER_FIELDS,
+	MY_ROOM_FIELDS,
+	ORDER_FIELDS,
+	OWNER_FIELDS,
+	PRODUCT_FIELDS,
+} from '../fragments';
 
 /**************************
  *         MEMBER         *
@@ -213,11 +220,94 @@ export const LENS_SEARCH = gql`
 				h
 				products {
 					...ProductFields
-					memberData { ...OwnerFields }
+					memberData {
+						...OwnerFields
+					}
 				}
 			}
 		}
 	}
 	${PRODUCT_FIELDS}
 	${OWNER_FIELDS}
+`;
+
+/**************************
+ *     CART & ORDERS      *
+ *************************/
+
+export const ADD_TO_CART = gql`
+	mutation AddToCart($input: CartItemInput!) {
+		addToCart(input: $input) {
+			_id
+			productId
+			quantity
+			assembly
+			available
+			maxQuantity
+		}
+	}
+`;
+
+export const UPDATE_CART_ITEM = gql`
+	mutation UpdateCartItem($input: CartItemUpdate!) {
+		updateCartItem(input: $input) {
+			_id
+			productId
+			quantity
+			assembly
+			available
+			maxQuantity
+		}
+	}
+`;
+
+export const REMOVE_CART_ITEM = gql`
+	mutation RemoveCartItem($productId: String!) {
+		removeCartItem(productId: $productId)
+	}
+`;
+
+export const CREATE_ORDERS = gql`
+	mutation CreateOrders($input: CheckoutInput!) {
+		createOrders(input: $input) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const RESERVE_PRODUCT = gql`
+	mutation ReserveProduct($input: ReserveInput!) {
+		reserveProduct(input: $input) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const UPDATE_ORDER_BY_SELLER = gql`
+	mutation UpdateOrderBySeller($input: OrderStatusUpdate!) {
+		updateOrderBySeller(input: $input) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const CANCEL_ORDER = gql`
+	mutation CancelOrder($input: CancelOrderInput!) {
+		cancelOrder(input: $input) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const COMPLETE_ORDER = gql`
+	mutation CompleteOrder($orderId: String!) {
+		completeOrder(orderId: $orderId) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
 `;

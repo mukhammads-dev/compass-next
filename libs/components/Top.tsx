@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, MouseEvent, useEffect, useState } from 'react';
-import { useReactiveVar } from '@apollo/client';
+import { useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
-import { Avatar, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import { Avatar, Badge, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -11,6 +12,7 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import { userVar } from '../../apollo/store';
+import { GET_MY_CART } from '../../apollo/user/query';
 import { isAdmin, logOut } from '../auth';
 import { DEFAULT_AVATAR, imageUrl } from '../config';
 import Logo from './common/Logo';
@@ -33,6 +35,9 @@ const Top = () => {
 	const router = useRouter();
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
+	/** the cart badge; mutations that change the cart refetch this query by name ("GetMyCart") */
+	const { data: cartData } = useQuery(GET_MY_CART, { skip: !user._id, fetchPolicy: 'cache-and-network' });
+	const cartCount: number = user._id ? (cartData?.getMyCart?.length ?? 0) : 0;
 	const [searchText, setSearchText] = useState<string>('');
 	const [scrolled, setScrolled] = useState<boolean>(false);
 	const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
@@ -131,6 +136,11 @@ const Top = () => {
 								onClick={() => router.push({ pathname: '/mypage', query: { category: 'myFavorites' } })}
 							>
 								<FavoriteBorderIcon fontSize={'small'} />
+							</IconButton>
+							<IconButton aria-label={t('Cart') as string} onClick={() => router.push('/cart')}>
+								<Badge badgeContent={cartCount} className={'cart-badge'} max={99}>
+									<ShoppingBagOutlinedIcon fontSize={'small'} />
+								</Badge>
 							</IconButton>
 							<IconButton
 								aria-label={'notifications'}

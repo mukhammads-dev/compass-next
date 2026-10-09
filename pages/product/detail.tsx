@@ -10,6 +10,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import withLayoutFull from '../../libs/components/layout/LayoutFull';
 import FitCheck from '../../libs/components/product/FitCheck';
+import BuyBox from '../../libs/components/product/BuyBox';
 import ProductCard from '../../libs/components/common/ProductCard';
 import RoomTourCard from '../../libs/components/common/RoomTourCard';
 import CommentSection from '../../libs/components/common/CommentSection';
@@ -219,12 +220,10 @@ const ProductDetail: NextPage = () => {
 										</Button>
 									)}
 								</>
-							) : (
-								<Button variant={'contained'} size={'large'} disabled={product.productStatus !== ProductStatus.ACTIVE}>
-									{seller?.memberType === MemberType.AGENT ? t('Contact store') : t('Contact seller')}
-								</Button>
-							)}
+							) : null}
 						</Stack>
+
+						{!isOwner && <BuyBox product={product} />}
 
 						{seller && (
 							<Link href={{ pathname: '/member', query: { memberId: seller._id } }} className={'seller'}>

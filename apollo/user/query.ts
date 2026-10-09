@@ -1,5 +1,12 @@
 import { gql } from '@apollo/client';
-import { ARTICLE_FIELDS, MEMBER_FIELDS, MY_ROOM_FIELDS, OWNER_FIELDS, PRODUCT_FIELDS } from '../fragments';
+import {
+	ARTICLE_FIELDS,
+	MEMBER_FIELDS,
+	MY_ROOM_FIELDS,
+	ORDER_FIELDS,
+	OWNER_FIELDS,
+	PRODUCT_FIELDS,
+} from '../fragments';
 
 /**************************
  *         MEMBER         *
@@ -10,10 +17,20 @@ export const GET_AGENTS = gql`
 		getAgents(input: $input) {
 			list {
 				...MemberFields
-				meLiked { memberId likeRefId myFavorite }
-				meFollowed { followingId followerId myFollowing }
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
+				meFollowed {
+					followingId
+					followerId
+					myFollowing
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${MEMBER_FIELDS}
@@ -23,8 +40,16 @@ export const GET_MEMBER = gql`
 	query GetMember($input: String!) {
 		getMember(memberId: $input) {
 			...MemberFields
-			meLiked { memberId likeRefId myFavorite }
-			meFollowed { followingId followerId myFollowing }
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
+			meFollowed {
+				followingId
+				followerId
+				myFollowing
+			}
 		}
 	}
 	${MEMBER_FIELDS}
@@ -38,8 +63,15 @@ export const GET_PRODUCT = gql`
 	query GetProduct($input: String!) {
 		getProduct(productId: $input) {
 			...ProductFields
-			memberData { ...OwnerFields memberDesc }
-			meLiked { memberId likeRefId myFavorite }
+			memberData {
+				...OwnerFields
+				memberDesc
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -51,10 +83,18 @@ export const GET_PRODUCTS = gql`
 		getProducts(input: $input) {
 			list {
 				...ProductFields
-				memberData { ...OwnerFields }
-				meLiked { memberId likeRefId myFavorite }
+				memberData {
+					...OwnerFields
+				}
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -65,8 +105,14 @@ export const GET_SIMILAR_PRODUCTS = gql`
 	query GetSimilarProducts($input: String!) {
 		getSimilarProducts(productId: $input) {
 			...ProductFields
-			memberData { ...OwnerFields }
-			meLiked { memberId likeRefId myFavorite }
+			memberData {
+				...OwnerFields
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -79,7 +125,9 @@ export const GET_AGENT_PRODUCTS = gql`
 			list {
 				...ProductFields
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -90,9 +138,13 @@ export const GET_FAVORITES = gql`
 		getFavorites(input: $input) {
 			list {
 				...ProductFields
-				memberData { ...OwnerFields }
+				memberData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -104,9 +156,13 @@ export const GET_VISITED = gql`
 		getVisited(input: $input) {
 			list {
 				...ProductFields
-				memberData { ...OwnerFields }
+				memberData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -121,8 +177,14 @@ export const GET_BOARD_ARTICLE = gql`
 	query GetBoardArticle($input: String!) {
 		getBoardArticle(articleId: $input) {
 			...ArticleFields
-			memberData { ...OwnerFields }
-			meLiked { memberId likeRefId myFavorite }
+			memberData {
+				...OwnerFields
+			}
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 			taggedProductsData {
 				...ProductFields
 			}
@@ -138,10 +200,18 @@ export const GET_BOARD_ARTICLES = gql`
 		getBoardArticles(input: $input) {
 			list {
 				...ArticleFields
-				memberData { ...OwnerFields }
-				meLiked { memberId likeRefId myFavorite }
+				memberData {
+					...OwnerFields
+				}
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${ARTICLE_FIELDS}
@@ -153,9 +223,13 @@ export const GET_PRODUCT_ROOM_TOURS = gql`
 		getProductRoomTours(input: $input) {
 			list {
 				...ArticleFields
-				memberData { ...OwnerFields }
+				memberData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${ARTICLE_FIELDS}
@@ -178,9 +252,16 @@ export const GET_COMMENTS = gql`
 				memberId
 				createdAt
 				updatedAt
-				memberData { _id memberNick memberImage memberType }
+				memberData {
+					_id
+					memberNick
+					memberImage
+					memberType
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 `;
@@ -197,10 +278,18 @@ export const GET_MEMBER_FOLLOWERS = gql`
 				followingId
 				followerId
 				createdAt
-				meFollowed { followingId followerId myFollowing }
-				followerData { ...OwnerFields }
+				meFollowed {
+					followingId
+					followerId
+					myFollowing
+				}
+				followerData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${OWNER_FIELDS}
@@ -214,10 +303,18 @@ export const GET_MEMBER_FOLLOWINGS = gql`
 				followingId
 				followerId
 				createdAt
-				meFollowed { followingId followerId myFollowing }
-				followingData { ...OwnerFields }
+				meFollowed {
+					followingId
+					followerId
+					myFollowing
+				}
+				followingData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${OWNER_FIELDS}
@@ -241,10 +338,17 @@ export const GET_NOTIFICATIONS = gql`
 				receiverId
 				productId
 				articleId
+				orderId
 				createdAt
-				authorData { _id memberNick memberImage }
+				authorData {
+					_id
+					memberNick
+					memberImage
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 `;
@@ -266,7 +370,9 @@ export const GET_NOTICES = gql`
 				eventEndAt
 				createdAt
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 `;
@@ -312,10 +418,119 @@ export const LENS_REGION = gql`
 			h
 			products {
 				...ProductFields
-				memberData { ...OwnerFields }
+				memberData {
+					...OwnerFields
+				}
 			}
 		}
 	}
 	${PRODUCT_FIELDS}
 	${OWNER_FIELDS}
+`;
+
+/**************************
+ *     CART & ORDERS      *
+ *************************/
+
+export const GET_MY_CART = gql`
+	query GetMyCart {
+		getMyCart {
+			_id
+			productId
+			quantity
+			assembly
+			available
+			maxQuantity
+			productData {
+				...ProductFields
+				memberData {
+					...OwnerFields
+				}
+			}
+		}
+	}
+	${PRODUCT_FIELDS}
+	${OWNER_FIELDS}
+`;
+
+export const GET_CHECKOUT_QUOTE = gql`
+	query GetCheckoutQuote($input: QuoteInput!) {
+		getCheckoutQuote(input: $input) {
+			stores {
+				sellerId
+				sellerNick
+				sellerImage
+				items {
+					productId
+					productTitle
+					productImage
+					productWidth
+					productDepth
+					productHeight
+					unitPrice
+					quantity
+					assembly
+					assemblyFee
+				}
+				itemsTotal
+				deliveryFee
+				assemblyTotal
+				stairsFee
+				orderTotal
+			}
+			itemsTotal
+			deliveryTotal
+			assemblyTotal
+			stairsTotal
+			grandTotal
+			earliestDate
+			latestDate
+		}
+	}
+`;
+
+export const GET_MY_ORDERS = gql`
+	query GetMyOrders($input: OrdersInquiry!) {
+		getMyOrders(input: $input) {
+			list {
+				...OrderFields
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const GET_STORE_ORDERS = gql`
+	query GetStoreOrders($input: OrdersInquiry!) {
+		getStoreOrders(input: $input) {
+			list {
+				...OrderFields
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const GET_ORDER = gql`
+	query GetOrder($orderId: String!) {
+		getOrder(orderId: $orderId) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
+`;
+
+export const GET_CHECKOUT_ORDERS = gql`
+	query GetCheckoutOrders($checkoutId: String!) {
+		getCheckoutOrders(checkoutId: $checkoutId) {
+			...OrderFields
+		}
+	}
+	${ORDER_FIELDS}
 `;
