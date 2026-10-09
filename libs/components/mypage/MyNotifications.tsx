@@ -18,6 +18,7 @@ const TYPE_LABEL: Record<NotificationType, string> = {
 	[NotificationType.COMMENT]: 'commented',
 	[NotificationType.FOLLOW]: 'followed you',
 	[NotificationType.TAG]: 'tagged your product',
+	[NotificationType.ORDER]: 'order update',
 };
 
 const MyNotifications = () => {
@@ -57,7 +58,9 @@ const MyNotifications = () => {
 			if (notification.notificationStatus === NotificationStatus.WAIT) {
 				await readNotification({ variables: { input: notification._id } });
 			}
-			if (notification.productId) {
+			if (notification.orderId) {
+				await router.push({ pathname: '/order', query: { id: notification.orderId } });
+			} else if (notification.productId) {
 				await router.push({ pathname: '/product/detail', query: { id: notification.productId } });
 			} else if (notification.articleId) {
 				await router.push({ pathname: '/community/detail', query: { id: notification.articleId } });

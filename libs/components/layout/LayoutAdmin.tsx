@@ -8,6 +8,7 @@ import PeopleOutlineRoundedIcon from '@mui/icons-material/PeopleOutlineRounded';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { userVar } from '../../../apollo/store';
@@ -18,6 +19,7 @@ import Logo from '../common/Logo';
 const ADMIN_MENU = [
 	{ href: '/_admin/users', label: 'Members', icon: <PeopleOutlineRoundedIcon /> },
 	{ href: '/_admin/products', label: 'Products', icon: <Inventory2OutlinedIcon /> },
+	{ href: '/_admin/orders', label: 'Orders', icon: <ReceiptLongOutlinedIcon /> },
 	{ href: '/_admin/community', label: 'Community', icon: <ForumOutlinedIcon /> },
 	{ href: '/_admin/cs', label: 'Notices', icon: <CampaignOutlinedIcon /> },
 ];

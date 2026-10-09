@@ -17,7 +17,9 @@ export type MyCategory =
 	| 'recentlyVisited'
 	| 'followers'
 	| 'followings'
-	| 'notifications';
+	| 'notifications'
+	| 'myOrders'
+	| 'storeOrders';
 
 interface MyMenuProps {
 	category: MyCategory;
@@ -34,6 +36,7 @@ const MyMenu = ({ category }: MyMenuProps) => {
 			items: [
 				{ id: 'myListings', label: agent ? 'My products' : 'My used listings' },
 				{ id: 'addProduct', label: agent ? 'Add product' : 'Sell an item' },
+				{ id: 'storeOrders', label: 'Orders to fulfil' },
 			],
 		},
 		{
@@ -46,6 +49,7 @@ const MyMenu = ({ category }: MyMenuProps) => {
 		{
 			title: 'Shopping',
 			items: [
+				{ id: 'myOrders', label: 'My orders' },
 				{ id: 'myRooms', label: 'My rooms' },
 				{ id: 'myFavorites', label: 'Favorites' },
 				{ id: 'recentlyVisited', label: 'Recently viewed' },

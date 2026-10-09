@@ -16,6 +16,7 @@ import MyFavorites from '../../libs/components/mypage/MyFavorites';
 import RecentlyVisited from '../../libs/components/mypage/RecentlyVisited';
 import MemberFollows from '../../libs/components/mypage/MemberFollows';
 import MyNotifications from '../../libs/components/mypage/MyNotifications';
+import OrderList from '../../libs/components/mypage/OrderList';
 import { userVar } from '../../apollo/store';
 import { getJwtToken, updateUserInfo } from '../../libs/auth';
 
@@ -35,6 +36,8 @@ const CATEGORIES: MyCategory[] = [
 	'followers',
 	'followings',
 	'notifications',
+	'myOrders',
+	'storeOrders',
 ];
 
 /** One page, many sections: /mypage?category=<section>. */
@@ -78,6 +81,8 @@ const MyPage: NextPage = () => {
 					{category === 'followers' && <MemberFollows mode={'followers'} memberId={user._id} />}
 					{category === 'followings' && <MemberFollows mode={'followings'} memberId={user._id} />}
 					{category === 'notifications' && <MyNotifications />}
+					{category === 'myOrders' && <OrderList side={'buyer'} />}
+					{category === 'storeOrders' && <OrderList side={'seller'} />}
 				</Stack>
 			</Stack>
 		</Stack>

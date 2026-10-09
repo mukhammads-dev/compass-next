@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { ARTICLE_FIELDS, MEMBER_FIELDS, OWNER_FIELDS, PRODUCT_FIELDS } from '../fragments';
+import { ARTICLE_FIELDS, MEMBER_FIELDS, ORDER_FIELDS, OWNER_FIELDS, PRODUCT_FIELDS } from '../fragments';
 
 export const GET_ALL_MEMBERS_BY_ADMIN = gql`
 	query GetAllMembersByAdmin($input: MembersInquiry!) {
@@ -7,7 +7,9 @@ export const GET_ALL_MEMBERS_BY_ADMIN = gql`
 			list {
 				...MemberFields
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${MEMBER_FIELDS}
@@ -18,9 +20,13 @@ export const GET_ALL_PRODUCTS_BY_ADMIN = gql`
 		getAllProductsByAdmin(input: $input) {
 			list {
 				...ProductFields
-				memberData { ...OwnerFields }
+				memberData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${PRODUCT_FIELDS}
@@ -32,9 +38,13 @@ export const GET_ALL_BOARD_ARTICLES_BY_ADMIN = gql`
 		getAllBoardArticlesByAdmin(input: $input) {
 			list {
 				...ArticleFields
-				memberData { ...OwnerFields }
+				memberData {
+					...OwnerFields
+				}
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
 	${ARTICLE_FIELDS}
@@ -54,7 +64,23 @@ export const GET_ALL_NOTICES_BY_ADMIN = gql`
 				eventEndAt
 				createdAt
 			}
-			metaCounter { total }
+			metaCounter {
+				total
+			}
 		}
 	}
+`;
+
+export const GET_ALL_ORDERS_BY_ADMIN = gql`
+	query GetAllOrdersByAdmin($input: OrdersInquiry!) {
+		getAllOrdersByAdmin(input: $input) {
+			list {
+				...OrderFields
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+	${ORDER_FIELDS}
 `;

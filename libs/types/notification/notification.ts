@@ -13,6 +13,7 @@ export interface Notification {
 	receiverId: string;
 	productId?: string;
 	articleId?: string;
+	orderId?: string;
 	createdAt: Date;
 	/** from aggregation **/
 	authorData?: Member;
