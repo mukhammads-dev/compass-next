@@ -3,7 +3,8 @@ import { ChangeEvent, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { CircularProgress, MenuItem, Pagination, Select, Stack } from '@mui/material';
+import { CircularProgress, Drawer, MenuItem, Pagination, Select, Stack } from '@mui/material';
+import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import withLayoutBasic from '../../libs/components/layout/LayoutBasic';
 import Filter from '../../libs/components/product/Filter';
 import ProductCard from '../../libs/components/common/ProductCard';
@@ -44,6 +45,7 @@ const ProductList: NextPage = () => {
 	const [searchFilter, pushSearchFilter, ready] = useInquiry<ProductsInquiry>(initialInput);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [total, setTotal] = useState<number>(0);
+	const [filtersOpen, setFiltersOpen] = useState<boolean>(false);
 
 	/** APOLLO REQUESTS **/
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
@@ -85,21 +87,47 @@ const ProductList: NextPage = () => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	/** how many filters are on, for the phone "Filters" button */
+	const activeFilters = Object.entries(searchFilter.search ?? {}).filter(
+		([key, value]) =>
+			key !== 'text' && value !== undefined && value !== null && !(Array.isArray(value) && !value.length),
+	).length;
+
 	const currentSort =
 		SORTS.find((item) => item.sort === searchFilter.sort && item.direction === searchFilter.direction)?.id ?? 'new';
 
 	return (
 		<Stack id={'product-list-page'}>
 			<Stack className={'container list-layout'}>
-				<aside>
+				<aside className={'filters-aside'}>
 					<Filter key={JSON.stringify(searchFilter.search)} searchFilter={searchFilter} onChange={pushSearchFilter} />
 				</aside>
+
+				<Drawer
+					anchor={'bottom'}
+					open={filtersOpen}
+					onClose={() => setFiltersOpen(false)}
+					PaperProps={{ className: 'filter-sheet' }}
+				>
+					<div className={'sheet-grip'} aria-hidden />
+					<div className={'sheet-body'}>
+						<Filter key={JSON.stringify(searchFilter.search)} searchFilter={searchFilter} onChange={pushSearchFilter} />
+					</div>
+					<button type={'button'} className={'btn-dark sheet-done'} onClick={() => setFiltersOpen(false)}>
+						{t('Show {{count}} products', { count: total })}
+					</button>
+				</Drawer>
 
 				<Stack className={'list-main'}>
 					<Stack className={'list-toolbar'}>
 						<span>
 							<strong>{total}</strong> {t('products')}
 						</span>
+						<button type={'button'} className={'m-filter-btn'} onClick={() => setFiltersOpen(true)}>
+							<TuneRoundedIcon fontSize={'small'} />
+							{t('Filters')}
+							{activeFilters > 0 && <b>{activeFilters}</b>}
+						</button>
 						<Select size={'small'} value={currentSort} onChange={(e) => sortHandler(e.target.value as string)}>
 							{SORTS.map((option) => (
 								<MenuItem key={option.id} value={option.id}>

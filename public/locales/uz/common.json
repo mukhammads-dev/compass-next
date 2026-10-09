@@ -578,5 +578,13 @@
 	"Please choose a delivery date for every store!": "Iltimos, har bir do'kon uchun yetkazish kunini tanlang!",
 	"Payment was declined, please try another card!": "To'lov rad etildi, boshqa karta bilan urinib ko'ring!",
 	"Please check the card number and expiry date!": "Karta raqami va amal qilish muddatini tekshiring!",
-	"This order can no longer be changed!": "Bu buyurtmani endi o'zgartirib bo'lmaydi!"
+	"This order can no longer be changed!": "Bu buyurtmani endi o'zgartirib bo'lmaydi!",
+	"Show {{count}} products": "{{count}} ta mahsulotni ko'rsatish",
+	"Filters": "Filtrlar",
+	"Menu": "Menyu",
+	"Log in to save pieces, keep a cart and follow your orders.": "Yoqqan buyumlarni saqlash, savat va buyurtmalarni kuzatish uchun kiring.",
+	"Home": "Bosh sahifa",
+	"Photo": "Rasm",
+	"Me": "Men",
+	"Main": "Asosiy"
 }
