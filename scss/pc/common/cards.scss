@@ -284,33 +284,6 @@
 	}
 }
 
-/* top three: a small oak tag in the window corner */
-.sf-rank {
-	position: absolute;
-	top: 18px;
-	left: 18px;
-	display: flex;
-	align-items: baseline;
-	gap: 1px;
-	padding: 5px 10px 6px;
-	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.94);
-	backdrop-filter: blur(8px);
-	color: $oak;
-	font-family: $font-serif;
-	font-size: 17px;
-	font-weight: 700;
-	line-height: 1;
-	box-shadow: 0 2px 10px rgba(20, 20, 20, 0.12);
-	small {
-		font-family: $font;
-		font-size: 10px;
-		font-weight: 800;
-		letter-spacing: 0.04em;
-		color: $ink;
-	}
-}
-
 .sf-body {
 	display: flex;
 	flex-direction: column;

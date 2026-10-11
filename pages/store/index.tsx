@@ -107,16 +107,8 @@ const StoreList: NextPage = () => {
 					<NoData text={'No stores found'} />
 				) : (
 					<div className={'grid grid-3 store-grid'}>
-						{stores.map((store, index) => (
-							<StoreCard
-								key={store._id}
-								store={store}
-								rank={
-									searchFilter.sort === 'memberRank' && searchFilter.page === 1 && !searchFilter.search?.text
-										? index + 1
-										: undefined
-								}
-							/>
+						{stores.map((store) => (
+							<StoreCard key={store._id} store={store} />
 						))}
 					</div>
 				)}

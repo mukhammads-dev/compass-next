@@ -18,8 +18,6 @@ import { sweetMixinErrorAlert } from '../../sweetAlert';
 
 interface StoreCardProps {
 	store: Member;
-	/** 1-based position when the list is sorted by rank; top 3 get a badge. */
-	rank?: number;
 }
 
 /**
@@ -28,7 +26,7 @@ interface StoreCardProps {
  * Follow + like are optimistic.
  * The card owns its own mutations, so it works the same on /store and on the home page.
  */
-const StoreCard = ({ store, rank }: StoreCardProps) => {
+const StoreCard = ({ store }: StoreCardProps) => {
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
 
@@ -104,12 +102,6 @@ const StoreCard = ({ store, rank }: StoreCardProps) => {
 					<span className={'sf-panes empty'}>
 						{hasPhoto && <img src={avatar} alt={''} />}
 						<em>{t('The window is being dressed')}</em>
-					</span>
-				)}
-				{rank && rank <= 3 && (
-					<span className={'sf-rank'} aria-label={`#${rank}`}>
-						<small>No.</small>
-						{rank}
 					</span>
 				)}
 			</Link>

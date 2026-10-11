@@ -31,11 +31,13 @@ const TopStores = () => {
 			<Stack className={'container'}>
 				<Stack className={'section-head'}>
 					<h2>{t('Top stores')}</h2>
-					<Link href={'/store'}>{t('See all')} <ArrowForwardIcon fontSize={'inherit'} /></Link>
+					<Link href={'/store'}>
+						{t('See all')} <ArrowForwardIcon fontSize={'inherit'} />
+					</Link>
 				</Stack>
 				<div className={'grid grid-4 store-grid'}>
-					{stores.map((store: Member, index: number) => (
-						<StoreCard key={store._id} store={store} rank={index + 1} />
+					{stores.map((store: Member) => (
+						<StoreCard key={store._id} store={store} />
 					))}
 				</div>
 			</Stack>
