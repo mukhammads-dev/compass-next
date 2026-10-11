@@ -23,8 +23,8 @@ interface StoreCardProps {
 }
 
 /**
- * Store card as a little storefront: an awning over a window that shows the store's
- * newest pieces, so you see what they sell before you read who they are.
+ * Store card as a shop window: the store's newest pieces come first,
+ * so you see what they sell before you read who they are.
  * Follow + like are optimistic.
  * The card owns its own mutations, so it works the same on /store and on the home page.
  */
@@ -94,7 +94,6 @@ const StoreCard = ({ store, rank }: StoreCardProps) => {
 	return (
 		<article className={'sf-card'}>
 			<Link href={profileHref} className={'sf-window'} aria-label={store.memberNick} tabIndex={-1}>
-				<span className={'sf-awning'} aria-hidden />
 				{windowPhotos.length ? (
 					<span className={`sf-panes n${windowPhotos.length}`}>
 						{windowPhotos.map((image) => (
