@@ -20,7 +20,7 @@ import { BoardArticleCategory } from '../../libs/enums/board-article.enum';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { MemberType } from '../../libs/enums/member.enum';
 import { DEFAULT_AVATAR, imageUrl } from '../../libs/config';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetMixinErrorAlert } from '../../libs/sweetAlert';
 import { T } from '../../libs/types/common';
 
 export const getStaticProps = async ({ locale }: any) => ({
@@ -95,7 +95,6 @@ const MemberPage: NextPage = () => {
 			else await subscribe({ variables: { input: member._id } });
 			const { data } = await getMemberRefetch({ input: memberId });
 			setMember(data?.getMember ?? null);
-			await sweetTopSmallSuccessAlert(following ? 'Unfollowed' : 'Followed', 800);
 		} catch (err: any) {
 			console.log('ERROR, followHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();

@@ -30,6 +30,8 @@ export interface Member {
 	/** from aggregation **/
 	meLiked?: MeLiked[];
 	meFollowed?: MeFollowed[];
+	/** first photos of the store's 3 newest products (store cards) */
+	storeWindow?: string[];
 }
 
 export interface Members {

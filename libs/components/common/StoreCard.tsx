@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Avatar } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/FavoriteRounded';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorderRounded';
 import NorthEastIcon from '@mui/icons-material/NorthEast';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import CheckIcon from '@mui/icons-material/Check';
@@ -14,7 +14,7 @@ import { LIKE_TARGET_MEMBER, SUBSCRIBE, UNSUBSCRIBE } from '../../../apollo/user
 import { Member } from '../../types/member/member';
 import { DEFAULT_AVATAR, imageUrl } from '../../config';
 import { Message } from '../../enums/common.enum';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetMixinErrorAlert } from '../../sweetAlert';
 
 interface StoreCardProps {
 	store: Member;
@@ -23,7 +23,9 @@ interface StoreCardProps {
 }
 
 /**
- * Store card: blurred-logo cover, follow + like with optimistic counters.
+ * Store card as a little storefront: an awning over a window that shows the store's
+ * newest pieces, so you see what they sell before you read who they are.
+ * Follow + like are optimistic.
  * The card owns its own mutations, so it works the same on /store and on the home page.
  */
 const StoreCard = ({ store, rank }: StoreCardProps) => {
@@ -78,7 +80,6 @@ const StoreCard = ({ store, rank }: StoreCardProps) => {
 			else await subscribe({ variables: { input: store._id } });
 			setFollowers((count) => Math.max(0, count + (following ? -1 : 1)));
 			setFollowing(!following);
-			await sweetTopSmallSuccessAlert(following ? t('Unfollowed') : t('Followed'), 800);
 		} catch (err: any) {
 			sweetMixinErrorAlert(err.message).then();
 		} finally {
@@ -86,76 +87,91 @@ const StoreCard = ({ store, rank }: StoreCardProps) => {
 		}
 	};
 
+	/** "Seongsu-dong 2-ga, Seongdong-gu, Seoul" → "Seongdong-gu, Seoul": the part people recognise */
+	const area = store.memberAddress ? store.memberAddress.split(',').slice(-2).join(',').trim() : t('Online store');
+	const windowPhotos = (store.storeWindow ?? []).filter(Boolean).slice(0, 3);
+
 	return (
-		<div className={'store-card'}>
-			<Link href={profileHref} className={'store-cover'} aria-label={store.memberNick}>
-				{hasPhoto && <span className={'cover-photo'} style={{ backgroundImage: `url(${avatar})` }} />}
-				{rank && rank <= 3 && <span className={'rank-badge'}>#{rank}</span>}
+		<article className={'sf-card'}>
+			<Link href={profileHref} className={'sf-window'} aria-label={store.memberNick} tabIndex={-1}>
+				<span className={'sf-awning'} aria-hidden />
+				{windowPhotos.length ? (
+					<span className={`sf-panes n${windowPhotos.length}`}>
+						{windowPhotos.map((image) => (
+							<img key={image} src={imageUrl(image, '')} alt={''} loading={'lazy'} />
+						))}
+					</span>
+				) : (
+					<span className={'sf-panes empty'}>
+						{hasPhoto && <img src={avatar} alt={''} />}
+						<em>{t('The window is being dressed')}</em>
+					</span>
+				)}
+				{rank && rank <= 3 && (
+					<span className={'sf-rank'} aria-label={`#${rank}`}>
+						<small>No.</small>
+						{rank}
+					</span>
+				)}
 			</Link>
 
-			<div className={'store-top'}>
-				<Link href={profileHref} className={'store-avatar'}>
-					<Avatar src={avatar} alt={store.memberNick} />
-				</Link>
+			<div className={'media-actions'}>
 				<button
-					className={`like-btn ${liked ? 'liked' : ''}`}
+					type={'button'}
+					className={`media-btn like ${liked ? 'on' : ''}`}
 					onClick={likeHandler}
 					aria-label={t('Like') as string}
 					aria-pressed={liked}
 				>
-					{liked ? <FavoriteIcon fontSize={'small'} /> : <FavoriteBorderIcon fontSize={'small'} />}
+					{liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+					{likes > 0 && <span>{likes}</span>}
 				</button>
 			</div>
 
-			<div className={'store-body'}>
-				<Link href={profileHref} className={'store-name'}>
-					<strong>{store.memberFullName || store.memberNick}</strong>
-					<NorthEastIcon className={'arrow'} />
-				</Link>
-				<span className={'store-nick'}>@{store.memberNick}</span>
-				<p className={'store-desc'}>{store.memberDesc || t('Furniture and home goods, curated for real rooms.')}</p>
-
-				<div className={'store-chips'}>
-					<span>
-						<PlaceOutlinedIcon />
-						{store.memberAddress || t('Online store')}
-					</span>
-				</div>
-
-				<div className={'store-stats'}>
-					<div>
-						<strong>{store.memberProducts ?? 0}</strong>
-						<span>{t('Products')}</span>
-					</div>
-					<div>
-						<strong>{followers}</strong>
-						<span>{t('Followers')}</span>
-					</div>
-					<div>
-						<strong>{likes}</strong>
-						<span>{t('Likes')}</span>
-					</div>
-				</div>
-
-				<div className={'store-actions'}>
-					<Link href={profileHref} className={'btn-visit'}>
-						{t('Visit store')}
+			<div className={'sf-body'}>
+				<div className={'sf-id'}>
+					<Link href={profileHref} className={'sf-avatar'}>
+						<Avatar src={avatar} alt={store.memberNick} />
 					</Link>
+					<div className={'sf-name'}>
+						<Link href={profileHref}>
+							<strong>{store.memberFullName || store.memberNick}</strong>
+						</Link>
+						<span>
+							<PlaceOutlinedIcon />
+							{area}
+						</span>
+					</div>
 					{!isMe && (
 						<button
-							className={`btn-follow ${following ? 'following' : ''}`}
+							type={'button'}
+							className={`sf-follow ${following ? 'on' : ''}`}
 							onClick={followHandler}
 							disabled={busy}
 							aria-pressed={following}
 						>
 							{following ? <CheckIcon /> : <AddIcon />}
-							<span className={'label'}>{following ? t('Following') : t('Follow')}</span>
-							{following && <span className={'label-hover'}>{t('Unfollow')}</span>}
+							{following ? t('Following') : t('Follow')}
 						</button>
 					)}
 				</div>
+
+				<p className={'sf-desc'}>{store.memberDesc || t('Furniture and home goods, curated for real rooms.')}</p>
+
+				<Link href={profileHref} className={'sf-ledger'}>
+					<span>
+						<b>{store.memberProducts ?? 0}</b> {t('pieces')}
+					</span>
+					<span>
+						<b>{followers}</b> {t('Followers')}
+					</span>
+					<span className={'sf-visit'}>
+						{t('Visit store')}
+						<NorthEastIcon />
+					</span>
+				</Link>
 			</div>
-		</div>
+		</article>
 	);
 };
 

@@ -15,7 +15,7 @@ import { Direction } from '../../enums/common.enum';
 import { isAgent } from '../../auth';
 import { DEFAULT_PRODUCT_IMAGE, MAX_ACTIVE_USED_LISTINGS, imageUrl } from '../../config';
 import { formatPrice } from '../../utils';
-import { sweetConfirmAlert, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetConfirmAlert, sweetMixinErrorAlert } from '../../sweetAlert';
 import NoData from '../common/NoData';
 import { T } from '../../types/common';
 
@@ -54,7 +54,6 @@ const MyListings = () => {
 			const { data } = await getAgentProductsRefetch({ input: productInquiry });
 			setProducts(data?.getAgentProducts?.list ?? []);
 			setTotal(data?.getAgentProducts?.metaCounter?.[0]?.total ?? 0);
-			await sweetTopSmallSuccessAlert('success', 800);
 		} catch (err: any) {
 			console.log('ERROR, changeStatusHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();
@@ -77,7 +76,9 @@ const MyListings = () => {
 
 			<Tabs
 				value={productInquiry.search.productStatus}
-				onChange={(_, value: ProductStatus) => setProductInquiry({ ...productInquiry, page: 1, search: { productStatus: value } })}
+				onChange={(_, value: ProductStatus) =>
+					setProductInquiry({ ...productInquiry, page: 1, search: { productStatus: value } })
+				}
 			>
 				<Tab value={ProductStatus.ACTIVE} label={t('On sale')} />
 				<Tab value={ProductStatus.SOLD} label={t('Sold')} />
@@ -107,7 +108,11 @@ const MyListings = () => {
 											{t('Edit')}
 										</Button>
 									</Link>
-									<Button size={'small'} variant={'outlined'} onClick={() => changeStatusHandler(product, ProductStatus.SOLD)}>
+									<Button
+										size={'small'}
+										variant={'outlined'}
+										onClick={() => changeStatusHandler(product, ProductStatus.SOLD)}
+									>
 										{t('Sold')}
 									</Button>
 									<Button

@@ -1,0 +1,254 @@
+/* ==========================================================================
+   Compass popups (SweetAlert2 restyled). Classes are set in libs/sweetAlert.ts.
+   ========================================================================== */
+
+@keyframes cp-pop-in {
+	from {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@keyframes cp-pop-out {
+	to {
+		opacity: 0;
+		transform: translateY(-6px) scale(0.98);
+	}
+}
+.swal2-container .swal2-popup.cp-in {
+	animation: cp-pop-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.swal2-container .swal2-popup.cp-out {
+	animation: cp-pop-out 0.16s ease-in forwards;
+}
+
+/* icons: thin line drawings in a soft tile, not the big animated circles */
+.swal2-container .swal2-icon.cp-icon {
+	width: 44px;
+	height: 44px;
+	margin: 0;
+	border: 0;
+	border-radius: 14px;
+	background: $soft;
+	color: $ink;
+	animation: none;
+	.swal2-icon-content {
+		display: grid;
+		place-items: center;
+	}
+	svg {
+		width: 24px;
+		height: 24px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+}
+
+/* ---------- pill: errors and quiet confirmations ---------- */
+.swal2-container.swal2-top {
+	padding-top: 84px;
+}
+.swal2-container .swal2-popup.swal2-toast.cp-pill {
+	display: flex !important;
+	align-items: center;
+	gap: 10px;
+	width: auto;
+	max-width: min(92vw, 460px);
+	padding: 8px 18px 8px 8px;
+	border-radius: 999px;
+	background: $ink;
+	color: $white;
+	box-shadow:
+		0 2px 6px rgba(20, 20, 20, 0.12),
+		0 16px 40px rgba(20, 20, 20, 0.22);
+	.cp-icon {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.12);
+		color: $white;
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+	&.cp-error .cp-icon {
+		background: rgba(229, 83, 61, 0.22);
+		color: #ff8a76;
+	}
+	&.cp-success .cp-icon {
+		background: rgba(208, 132, 63, 0.24);
+		color: #f0b47a;
+	}
+	.cp-pill-text {
+		margin: 0;
+		padding: 0;
+		color: $white;
+		font-family: $font;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.35;
+		text-align: left;
+	}
+}
+
+/* ---------- dialog: confirm + log in ---------- */
+.swal2-container.swal2-backdrop-show {
+	background: rgba(20, 20, 20, 0.36);
+	backdrop-filter: blur(3px);
+}
+.swal2-container .swal2-popup.cp-dialog {
+	width: min(92vw, 380px);
+	padding: 28px 24px 20px;
+	border-radius: 24px;
+	background: $white;
+	box-shadow: 0 24px 64px rgba(20, 20, 20, 0.24);
+	display: grid;
+	justify-items: center;
+	gap: 0;
+	font-family: $font;
+	.cp-icon {
+		width: 52px;
+		height: 52px;
+		border-radius: 16px;
+		background: $oak-soft;
+		color: $oak;
+		svg {
+			width: 28px;
+			height: 28px;
+		}
+	}
+	.cp-title {
+		margin: 16px 0 0;
+		padding: 0;
+		color: $ink;
+		font-size: 20px;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+	}
+	.cp-text {
+		margin: 8px 0 0;
+		padding: 0;
+		color: $muted;
+		font-size: 15px;
+		line-height: 1.5;
+	}
+	.cp-actions {
+		display: grid !important;
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+		width: 100%;
+		margin: 22px 0 0;
+	}
+	.cp-btn {
+		width: 100%;
+		height: 48px;
+		margin: 0;
+		border: 0;
+		border-radius: 999px;
+		font-family: $font;
+		font-size: 15px;
+		font-weight: 700;
+		cursor: pointer;
+		transition:
+			background 0.15s ease,
+			transform 0.1s ease;
+		&:active {
+			transform: scale(0.98);
+		}
+		&:focus-visible {
+			outline: 2px solid $oak;
+			outline-offset: 2px;
+		}
+	}
+	.cp-btn-primary {
+		background: $ink;
+		color: $white;
+		&:hover {
+			background: $ink-dark;
+		}
+	}
+	.cp-btn-ghost {
+		background: $soft;
+		color: $ink;
+		&:hover {
+			background: darken($soft, 4%);
+		}
+	}
+}
+
+/* ---------- like / share over a photo ---------- */
+.media-frame {
+	position: relative;
+}
+.media-actions {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	z-index: 3;
+	display: flex;
+	gap: 8px;
+}
+.author-row .media-actions,
+.like-row .media-actions {
+	position: static;
+	margin-left: auto;
+	.media-btn {
+		border: 1px solid $line;
+		box-shadow: none;
+	}
+}
+.media-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	min-width: 40px;
+	height: 40px;
+	padding: 0 11px;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	backdrop-filter: blur(8px);
+	color: $ink;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	box-shadow: 0 2px 10px rgba(20, 20, 20, 0.12);
+	transition:
+		transform 0.12s ease,
+		color 0.15s ease;
+	svg {
+		font-size: 20px;
+	}
+	&:active {
+		transform: scale(0.92);
+	}
+	&.like.on {
+		color: $sale;
+		svg {
+			animation: cp-heart 0.32s ease;
+		}
+	}
+	&.on:not(.like) {
+		color: $oak;
+	}
+}
+@keyframes cp-heart {
+	40% {
+		transform: scale(1.25);
+	}
+}
+
+/* "Added" state of the add-to-cart button */
+.buy-secondary.added {
+	border-color: $ink !important;
+	gap: 6px;
+}

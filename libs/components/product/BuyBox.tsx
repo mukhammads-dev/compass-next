@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { CircularProgress } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
@@ -15,7 +16,7 @@ import { ProductCondition, ProductStatus } from '../../enums/product.enum';
 import { MemberType } from '../../enums/member.enum';
 import { ASSEMBLY_FEE, MAX_ITEM_QUANTITY } from '../../config';
 import { formatPrice } from '../../utils';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetMixinErrorAlert } from '../../sweetAlert';
 
 interface BuyBoxProps {
 	product: Product;
@@ -32,6 +33,8 @@ const BuyBox = ({ product }: BuyBoxProps) => {
 	const [quantity, setQuantity] = useState<number>(1);
 	const [assembly, setAssembly] = useState<boolean>(false);
 	const [busy, setBusy] = useState<'cart' | 'buy' | null>(null);
+	/** the button itself says "Added" for a moment instead of a popup; the cart badge counts up too */
+	const [added, setAdded] = useState<boolean>(false);
 
 	const [addToCart] = useMutation(ADD_TO_CART, { refetchQueries: ['GetMyCart'] });
 
@@ -55,7 +58,8 @@ const BuyBox = ({ product }: BuyBoxProps) => {
 			if (then === 'checkout') {
 				await router.push({ pathname: '/checkout', query: { items: product._id } });
 			} else {
-				await sweetTopSmallSuccessAlert(t('Added to your cart'), 900);
+				setAdded(true);
+				window.setTimeout(() => setAdded(false), 1800);
 			}
 		} catch (err: any) {
 			console.log('ERROR, addHandler:', err.message);
@@ -150,8 +154,21 @@ const BuyBox = ({ product }: BuyBoxProps) => {
 						<AddRoundedIcon />
 					</button>
 				</div>
-				<button type={'button'} className={'buy-secondary'} disabled={Boolean(busy)} onClick={() => addHandler('stay')}>
-					{busy === 'cart' ? <CircularProgress size={18} color={'inherit'} /> : t('Add to cart')}
+				<button
+					type={'button'}
+					className={`buy-secondary ${added ? 'added' : ''}`}
+					disabled={Boolean(busy)}
+					onClick={() => addHandler('stay')}
+				>
+					{busy === 'cart' ? (
+						<CircularProgress size={18} color={'inherit'} />
+					) : added ? (
+						<>
+							<CheckRoundedIcon fontSize={'small'} /> {t('Added')}
+						</>
+					) : (
+						t('Add to cart')
+					)}
 				</button>
 				<button
 					type={'button'}

@@ -47,6 +47,11 @@ export const LIKE_TARGET_MEMBER = gql`
 		likeTargetMember(memberId: $input) {
 			_id
 			memberLikes
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
@@ -78,6 +83,11 @@ export const LIKE_TARGET_PRODUCT = gql`
 		likeTargetProduct(productId: $input) {
 			_id
 			productLikes
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;
@@ -109,6 +119,11 @@ export const LIKE_TARGET_BOARD_ARTICLE = gql`
 		likeTargetBoardArticle(articleId: $input) {
 			_id
 			articleLikes
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
 		}
 	}
 `;

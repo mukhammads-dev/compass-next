@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
 import CenterFocusWeakRoundedIcon from '@mui/icons-material/CenterFocusWeakRounded';
+import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import { lensPhotoVar } from '../../../apollo/store';
 import { GET_BOARD_ARTICLES } from '../../../apollo/user/query';
 import { BoardArticle } from '../../types/board-article/board-article';
@@ -119,12 +120,26 @@ const HeroGallery = () => {
 					<span>{t('Fall for a room.')}</span>
 					<span>{t('Take its furniture home.')}</span>
 				</h1>
-				<div className={'lens-entry'}>
-					<button type={'button'} className={'lens-btn'} onClick={open}>
+				<div className={'lens-entry ai-entry'}>
+					<button type={'button'} className={'lens-btn ai'} onClick={open}>
+						<span className={'ai-scan'} aria-hidden />
 						<CenterFocusWeakRoundedIcon />
 						{t('Find it from a photo')}
+						<span className={'ai-chip'}>
+							<AutoAwesomeRoundedIcon />
+							AI
+						</span>
 					</button>
-					<span>{t('or drag a photo of a room here')}</span>
+					<div className={'ai-caption'}>
+						<p>
+							<strong>Compass AI</strong> {t('spots every piece in a room photo and finds it in the shop.')}
+						</p>
+						<span className={'ai-tags'} aria-hidden>
+							<i>{t('Sofa')} 96%</i>
+							<i>{t('Lamp')} 91%</i>
+							<i>{t('Rug')} 88%</i>
+						</span>
+					</div>
 					<input {...inputProps} />
 				</div>
 			</Stack>

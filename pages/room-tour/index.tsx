@@ -19,8 +19,9 @@ import { BoardArticlesInquiry } from '../../libs/types/board-article/board-artic
 import { BoardArticleCategory } from '../../libs/enums/board-article.enum';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { ROOM_TOURS_PAGE_LIMIT } from '../../libs/config';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetMixinErrorAlert } from '../../libs/sweetAlert';
 import { T } from '../../libs/types/common';
+import { flipLike, settleLike } from '../../libs/like';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -56,7 +57,7 @@ const RoomTourList: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
 
-	const { loading, refetch: getRoomToursRefetch } = useQuery(GET_BOARD_ARTICLES, {
+	const { loading } = useQuery(GET_BOARD_ARTICLES, {
 		fetchPolicy: 'network-only',
 		variables: { input },
 		skip: !ready,
@@ -69,15 +70,16 @@ const RoomTourList: NextPage = () => {
 
 	/** HANDLERS **/
 	const likeArticleHandler = async (user: T, id: string) => {
+		if (!id) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = roomTours;
+		setRoomTours((list) => list.map((item) => (item._id === id ? flipLike(item, 'articleLikes') : item)));
 		try {
-			if (!id) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetBoardArticle({ variables: { input: id } });
-			const { data } = await getRoomToursRefetch({ input });
-			setRoomTours(data?.getBoardArticles?.list ?? []);
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetBoardArticle({ variables: { input: id } });
+			const reply = data?.likeTargetBoardArticle;
+			setRoomTours((list) => list.map((item) => (item._id === id ? settleLike(item, 'articleLikes', reply) : item)));
 		} catch (err: any) {
-			console.log('ERROR, likeArticleHandler:', err.message);
+			setRoomTours(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};

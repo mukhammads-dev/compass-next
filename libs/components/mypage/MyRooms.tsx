@@ -12,13 +12,14 @@ import { ProductRoom, ProductStyle } from '../../enums/product.enum';
 import { Message } from '../../enums/common.enum';
 import { productRooms, productStyles } from '../../config';
 import { cleanObject, enumLabel, formatPrice } from '../../utils';
-import { sweetConfirmAlert, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetConfirmAlert, sweetMixinErrorAlert } from '../../sweetAlert';
 import NoData from '../common/NoData';
 import { T } from '../../types/common';
 
 const MAX_MY_ROOMS = 5;
 
-type NumberKey = 'myRoomWidth' | 'myRoomDepth' | 'myRoomHeight' | 'myRoomDoorWidth' | 'myRoomDoorHeight' | 'myRoomBudget';
+type NumberKey =
+	'myRoomWidth' | 'myRoomDepth' | 'myRoomHeight' | 'myRoomDoorWidth' | 'myRoomDoorHeight' | 'myRoomBudget';
 
 const emptyRoom: MyRoomInput = {
 	myRoomName: '',
@@ -59,7 +60,7 @@ const MyRooms = () => {
 	const setNumber = (key: NumberKey, value: string) => {
 		const parsed = parseInt(value, 10);
 		const next = Number.isNaN(parsed) ? undefined : Math.max(0, parsed);
-		setRoomForm({ ...roomForm, [key]: key === 'myRoomWidth' || key === 'myRoomDepth' ? next ?? 0 : next });
+		setRoomForm({ ...roomForm, [key]: key === 'myRoomWidth' || key === 'myRoomDepth' ? (next ?? 0) : next });
 	};
 
 	const openFormHandler = (room?: MyRoom) => {
@@ -76,7 +77,7 @@ const MyRooms = () => {
 						myRoomDoorHeight: room.myRoomDoorHeight ?? undefined,
 						myRoomStyle: room.myRoomStyle ?? undefined,
 						myRoomBudget: room.myRoomBudget ?? undefined,
-				  }
+					}
 				: emptyRoom,
 		);
 		setFormOpen(true);
@@ -92,7 +93,6 @@ const MyRooms = () => {
 			else await saveMyRoom({ variables: { input } });
 			setFormOpen(false);
 			await reload();
-			await sweetTopSmallSuccessAlert(t('Room saved') as string, 800);
 		} catch (err: any) {
 			console.log('ERROR, saveRoomHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();
@@ -132,7 +132,9 @@ const MyRooms = () => {
 				)}
 			</Stack>
 			<p className={'muted'}>
-				{t('Save the size of your rooms once. Compass will tell you if a product fits — and if it goes through the door.')}
+				{t(
+					'Save the size of your rooms once. Compass will tell you if a product fits — and if it goes through the door.',
+				)}
 			</p>
 
 			{formOpen && (

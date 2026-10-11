@@ -14,7 +14,7 @@ import { BoardArticleCategory, BoardArticleStatus } from '../../enums/board-arti
 import { Direction } from '../../enums/common.enum';
 import { DEFAULT_ROOM_IMAGE, imageUrl } from '../../config';
 import { enumLabel } from '../../utils';
-import { sweetConfirmAlert, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetConfirmAlert, sweetMixinErrorAlert } from '../../sweetAlert';
 import NoData from '../common/NoData';
 import { T } from '../../types/common';
 
@@ -52,7 +52,6 @@ const MyArticles = () => {
 			const { data } = await getArticlesRefetch({ input: articleInquiry });
 			setArticles(data?.getBoardArticles?.list ?? []);
 			setTotal(data?.getBoardArticles?.metaCounter?.[0]?.total ?? 0);
-			await sweetTopSmallSuccessAlert('success', 800);
 		} catch (err: any) {
 			console.log('ERROR, removeArticleHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();
@@ -77,7 +76,10 @@ const MyArticles = () => {
 						return (
 							<Stack key={article._id} className={'listing-row'}>
 								<Link
-									href={{ pathname: isRoomTour ? '/room-tour/detail' : '/community/detail', query: { id: article._id } }}
+									href={{
+										pathname: isRoomTour ? '/room-tour/detail' : '/community/detail',
+										query: { id: article._id },
+									}}
 									className={'listing-main'}
 								>
 									{isRoomTour && <img src={imageUrl(article.roomImages?.[0], DEFAULT_ROOM_IMAGE)} alt={''} />}

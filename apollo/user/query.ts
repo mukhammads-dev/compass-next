@@ -27,6 +27,7 @@ export const GET_AGENTS = gql`
 					followerId
 					myFollowing
 				}
+				storeWindow
 			}
 			metaCounter {
 				total

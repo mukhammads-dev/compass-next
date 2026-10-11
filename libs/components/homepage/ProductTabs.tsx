@@ -12,9 +12,10 @@ import { Product } from '../../types/product/product';
 import { ProductsInquiry } from '../../types/product/product.input';
 import { ProductCondition } from '../../enums/product.enum';
 import { Direction, Message } from '../../enums/common.enum';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetMixinErrorAlert } from '../../sweetAlert';
 import { T } from '../../types/common';
 import ProductCard from '../common/ProductCard';
+import { flipLike, settleLike } from '../../like';
 
 interface ProductTab {
 	id: string;
@@ -59,7 +60,7 @@ const ProductTabs = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-	const { loading, refetch: getProductsRefetch } = useQuery(GET_PRODUCTS, {
+	const { loading } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: active.inquiry },
 		notifyOnNetworkStatusChange: true,
@@ -68,15 +69,16 @@ const ProductTabs = () => {
 
 	/** HANDLERS **/
 	const likeProductHandler = async (user: T, id: string) => {
+		if (!id) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = products;
+		setProducts((list) => list.map((item) => (item._id === id ? flipLike(item, 'productLikes') : item)));
 		try {
-			if (!id) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetProduct({ variables: { input: id } });
-			const { data } = await getProductsRefetch({ input: active.inquiry });
-			setProducts(data?.getProducts?.list ?? []);
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetProduct({ variables: { input: id } });
+			const reply = data?.likeTargetProduct;
+			setProducts((list) => list.map((item) => (item._id === id ? settleLike(item, 'productLikes', reply) : item)));
 		} catch (err: any) {
-			console.log('ERROR, likeProductHandler:', err.message);
+			setProducts(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};

@@ -37,11 +37,14 @@ const MyFavorites = () => {
 	/** HANDLERS **/
 	const likeProductHandler = async (_user: T, id: string) => {
 		try {
+			/* unliking here takes the piece off the list at once */
+			setProducts((list) => list.filter((item) => item._id !== id));
+			setTotal((count) => Math.max(0, count - 1));
 			await likeTargetProduct({ variables: { input: id } });
+		} catch (err: any) {
 			const { data } = await getFavoritesRefetch({ input: inquiry });
 			setProducts(markLiked(data?.getFavorites?.list));
 			setTotal(data?.getFavorites?.metaCounter?.[0]?.total ?? 0);
-		} catch (err: any) {
 			console.log('ERROR, likeProductHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();
 		}

@@ -11,7 +11,7 @@ import { CommentsInquiry } from '../../types/comment/comment.input';
 import { CommentGroup, CommentStatus } from '../../enums/comment.enum';
 import { Direction, Message } from '../../enums/common.enum';
 import { COMMENTS_PAGE_LIMIT, DEFAULT_AVATAR, imageUrl } from '../../config';
-import { sweetConfirmAlert, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetConfirmAlert, sweetMixinErrorAlert } from '../../sweetAlert';
 import { T } from '../../types/common';
 
 interface CommentSectionProps {
@@ -69,7 +69,6 @@ const CommentSection = (props: CommentSectionProps) => {
 			setContent('');
 			await refresh(1);
 			onChange?.();
-			await sweetTopSmallSuccessAlert(t('Comment added') as string, 800);
 		} catch (err: any) {
 			console.log('ERROR, createCommentHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();

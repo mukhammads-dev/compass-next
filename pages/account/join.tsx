@@ -196,7 +196,13 @@ const Join: NextPage = () => {
 						inputProps={{
 							value: form.nick,
 							placeholder: t('e.g. minji_home') as string,
-							autoComplete: 'username',
+							/* "username" made Chrome offer saved e-mail addresses; a nickname is not an e-mail.
+							   Logging in still offers the nickname saved with the password. */
+							name: isSignup ? 'nickname' : 'username',
+							autoComplete: isSignup ? 'nickname' : 'username',
+							inputMode: 'text',
+							autoCapitalize: 'none',
+							spellCheck: false,
 							maxLength: NICK_LENGTH.max,
 							onChange: (e) => changeHandler('nick', e.target.value),
 							onBlur: () => setTouched({ ...touched, nick: true }),

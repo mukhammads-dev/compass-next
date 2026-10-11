@@ -27,7 +27,7 @@ import {
 	sellerNextStep,
 	statusLabel,
 } from '../../libs/order';
-import { sweetConfirmAlert, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetConfirmAlert, sweetMixinErrorAlert } from '../../libs/sweetAlert';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -107,7 +107,6 @@ const OrderDetail: NextPage = () => {
 		try {
 			setBusy(true);
 			await task();
-			await sweetTopSmallSuccessAlert(t(done), 900);
 		} catch (err: any) {
 			console.log('ERROR, order action:', err.message);
 			sweetMixinErrorAlert(t(err.message)).then();

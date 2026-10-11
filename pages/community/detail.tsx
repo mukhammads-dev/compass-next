@@ -6,9 +6,7 @@ import moment from 'moment';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Avatar, Button, CircularProgress, Stack } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Avatar, CircularProgress, Stack } from '@mui/material';
 import withLayoutFull from '../../libs/components/layout/LayoutFull';
 import CommentSection from '../../libs/components/common/CommentSection';
 import NoData from '../../libs/components/common/NoData';
@@ -21,8 +19,10 @@ import { CommentGroup } from '../../libs/enums/comment.enum';
 import { Message } from '../../libs/enums/common.enum';
 import { DEFAULT_AVATAR, imageUrl } from '../../libs/config';
 import { enumLabel } from '../../libs/utils';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetMixinErrorAlert } from '../../libs/sweetAlert';
 import { T } from '../../libs/types/common';
+import { flipLike, settleLike } from '../../libs/like';
+import MediaActions from '../../libs/components/common/MediaActions';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -61,14 +61,15 @@ const CommunityDetail: NextPage = () => {
 	};
 
 	const likeArticleHandler = async () => {
+		if (!article) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = article;
+		setArticle(flipLike(article, 'articleLikes'));
 		try {
-			if (!articleId) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetBoardArticle({ variables: { input: articleId } });
-			await reloadArticle();
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetBoardArticle({ variables: { input: article._id } });
+			setArticle((current) => (current ? settleLike(current, 'articleLikes', data?.likeTargetBoardArticle) : current));
 		} catch (err: any) {
-			console.log('ERROR, likeArticleHandler:', err.message);
+			setArticle(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};
@@ -108,23 +109,16 @@ const CommunityDetail: NextPage = () => {
 					<span className={'muted'}>
 						{moment(article.createdAt).format('YYYY.MM.DD HH:mm')} · {t('Views')} {article.articleViews}
 					</span>
+					<MediaActions
+						liked={liked}
+						likes={article.articleLikes ?? 0}
+						onLike={likeArticleHandler}
+						title={article.articleTitle}
+					/>
 				</Stack>
 
-				{article.articleImage && (
-					<img className={'article-image'} src={imageUrl(article.articleImage, '')} alt={''} />
-				)}
+				{article.articleImage && <img className={'article-image'} src={imageUrl(article.articleImage, '')} alt={''} />}
 				<p className={'article-content'}>{article.articleContent}</p>
-
-				<Stack className={'like-row'}>
-					<Button
-						variant={liked ? 'contained' : 'outlined'}
-						color={liked ? 'secondary' : 'primary'}
-						startIcon={liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-						onClick={likeArticleHandler}
-					>
-						{article.articleLikes}
-					</Button>
-				</Stack>
 
 				<CommentSection commentGroup={CommentGroup.ARTICLE} commentRefId={article._id} onChange={reloadArticle} />
 			</Stack>

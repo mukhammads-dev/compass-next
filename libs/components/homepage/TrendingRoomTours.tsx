@@ -10,9 +10,10 @@ import { BoardArticle } from '../../types/board-article/board-article';
 import { BoardArticlesInquiry } from '../../types/board-article/board-article.input';
 import { BoardArticleCategory } from '../../enums/board-article.enum';
 import { Direction, Message } from '../../enums/common.enum';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
+import { sweetMixinErrorAlert } from '../../sweetAlert';
 import { T } from '../../types/common';
 import RoomTourCard from '../common/RoomTourCard';
+import { flipLike, settleLike } from '../../like';
 
 const initialInput: BoardArticlesInquiry = {
 	page: 1,
@@ -29,7 +30,7 @@ const TrendingRoomTours = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
 
-	const { refetch: getRoomToursRefetch } = useQuery(GET_BOARD_ARTICLES, {
+	useQuery(GET_BOARD_ARTICLES, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: initialInput },
 		notifyOnNetworkStatusChange: true,
@@ -38,15 +39,16 @@ const TrendingRoomTours = () => {
 
 	/** HANDLERS **/
 	const likeArticleHandler = async (user: T, id: string) => {
+		if (!id) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = roomTours;
+		setRoomTours((list) => list.map((item) => (item._id === id ? flipLike(item, 'articleLikes') : item)));
 		try {
-			if (!id) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetBoardArticle({ variables: { input: id } });
-			const { data } = await getRoomToursRefetch({ input: initialInput });
-			setRoomTours(data?.getBoardArticles?.list ?? []);
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetBoardArticle({ variables: { input: id } });
+			const reply = data?.likeTargetBoardArticle;
+			setRoomTours((list) => list.map((item) => (item._id === id ? settleLike(item, 'articleLikes', reply) : item)));
 		} catch (err: any) {
-			console.log('ERROR, likeArticleHandler:', err.message);
+			setRoomTours(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};
@@ -58,7 +60,9 @@ const TrendingRoomTours = () => {
 			<Stack className={'container'}>
 				<Stack className={'section-head'}>
 					<h2>{t('Room Tours of the week')}</h2>
-					<Link href={'/room-tour'}>{t('See all')} <ArrowForwardIcon fontSize={'inherit'} /></Link>
+					<Link href={'/room-tour'}>
+						{t('See all')} <ArrowForwardIcon fontSize={'inherit'} />
+					</Link>
 				</Stack>
 				{/* masonry: photo heights vary like a real feed instead of a uniform grid */}
 				<div className={'tour-masonry'}>

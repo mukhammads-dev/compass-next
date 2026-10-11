@@ -16,8 +16,9 @@ import { Product } from '../../libs/types/product/product';
 import { ProductsInquiry } from '../../libs/types/product/product.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { PRODUCTS_PAGE_LIMIT } from '../../libs/config';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetMixinErrorAlert } from '../../libs/sweetAlert';
 import { T } from '../../libs/types/common';
+import { flipLike, settleLike } from '../../libs/like';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -50,7 +51,7 @@ const ProductList: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-	const { loading, refetch: getProductsRefetch } = useQuery(GET_PRODUCTS, {
+	const { loading } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'network-only',
 		variables: { input: searchFilter },
 		skip: !ready,
@@ -63,15 +64,16 @@ const ProductList: NextPage = () => {
 
 	/** HANDLERS **/
 	const likeProductHandler = async (user: T, id: string) => {
+		if (!id) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = products;
+		setProducts((list) => list.map((item) => (item._id === id ? flipLike(item, 'productLikes') : item)));
 		try {
-			if (!id) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetProduct({ variables: { input: id } });
-			const { data } = await getProductsRefetch({ input: searchFilter });
-			setProducts(data?.getProducts?.list ?? []);
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetProduct({ variables: { input: id } });
+			const reply = data?.likeTargetProduct;
+			setProducts((list) => list.map((item) => (item._id === id ? settleLike(item, 'productLikes', reply) : item)));
 		} catch (err: any) {
-			console.log('ERROR, likeProductHandler:', err.message);
+			setProducts(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};

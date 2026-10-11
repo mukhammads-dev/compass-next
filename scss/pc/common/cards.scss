@@ -210,301 +210,249 @@
 	}
 }
 
-/* ---------- store card ---------- */
-.store-card {
+/* ---------- store card: a little storefront ---------- */
+.sf-card {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid $line;
-	border-radius: $radius-lg;
+	border-radius: 22px;
 	background: $white;
+	border: 1px solid $line;
 	overflow: hidden;
 	transition:
 		box-shadow 0.25s ease,
-		transform 0.25s ease,
-		border-color 0.25s ease;
+		transform 0.25s ease;
 	&:hover {
-		transform: translateY(-4px);
-		border-color: transparent;
-		box-shadow:
-			0 2px 4px rgba(20, 20, 20, 0.04),
-			0 24px 48px rgba(20, 20, 20, 0.12);
-		.cover-photo {
-			transform: scale(1.45);
-		}
-		.store-name .arrow {
-			transform: translate(2px, -2px);
-			opacity: 1;
+		transform: translateY(-3px);
+		box-shadow: $shadow;
+		.sf-panes img {
+			transform: scale(1.04);
 		}
 	}
+	> .media-actions {
+		top: 30px;
+		right: 12px;
+	}
+}
 
-	/* Cover: the store's own logo, blown up and blurred, under an ink-to-oak wash.
-	   Every store gets a unique, on-brand cover without uploading anything. */
-	.store-cover {
+.sf-window {
+	position: relative;
+	display: block;
+	padding: 0 10px;
+	background: $soft;
+}
+
+/* striped awning with a scalloped edge: ink and paper, like a shop on a quiet street */
+.sf-awning {
+	display: block;
+	height: 22px;
+	margin: 0 -10px;
+	filter: drop-shadow(0 2px 0 rgba(20, 20, 20, 0.08));
+	background: repeating-linear-gradient(90deg, $ink 0 18px, mix($oak, $paper, 45%) 18px 36px);
+	-webkit-mask:
+		linear-gradient(#000 0 0) top / 100% 13px no-repeat,
+		radial-gradient(9px at 9px 13px, #000 98%, transparent) 0 0 / 18px 22px repeat-x;
+	mask:
+		linear-gradient(#000 0 0) top / 100% 13px no-repeat,
+		radial-gradient(9px at 9px 13px, #000 98%, transparent) 0 0 / 18px 22px repeat-x;
+}
+
+.sf-panes {
+	display: grid;
+	gap: 4px;
+	height: 188px;
+	margin-top: 8px;
+	border-radius: 14px 14px 0 0;
+	overflow: hidden;
+	background: darken($soft, 3%);
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.5s ease;
+	}
+	&.n2 {
+		grid-template-columns: 1.4fr 1fr;
+	}
+	&.n3 {
+		grid-template-columns: 1.4fr 1fr;
+		grid-template-rows: 1fr 1fr;
+		img:first-child {
+			grid-row: 1 / 3;
+		}
+	}
+	&.empty {
 		position: relative;
+		place-items: center;
+		img {
+			position: absolute;
+			inset: 0;
+			filter: blur(18px) saturate(1.2);
+			opacity: 0.5;
+			transform: scale(1.3);
+		}
+		em {
+			position: relative;
+			color: $muted;
+			font-size: 13px;
+			font-style: normal;
+			font-weight: 600;
+		}
+	}
+}
+
+/* hanging sign for the top three */
+.sf-rank {
+	position: absolute;
+	top: 26px;
+	left: 20px;
+	display: flex;
+	align-items: baseline;
+	gap: 1px;
+	padding: 6px 11px 7px;
+	border-radius: 10px;
+	background: $oak;
+	color: $white;
+	font-family: $font-serif;
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1;
+	box-shadow: 0 6px 14px rgba(208, 132, 63, 0.35);
+	small {
+		font-family: $font;
+		font-size: 10px;
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		opacity: 0.85;
+	}
+	&::before {
+		content: '';
+		position: absolute;
+		top: -12px;
+		left: 50%;
+		width: 1.5px;
+		height: 12px;
+		background: $ink;
+	}
+}
+
+.sf-body {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 16px 18px 14px;
+	border-top: 3px solid $ink;
+}
+
+.sf-id {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	.sf-avatar .MuiAvatar-root {
+		width: 44px;
+		height: 44px;
+		border: 1px solid $line;
+	}
+}
+.sf-name {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	strong {
 		display: block;
-		height: 116px;
-		margin: 8px 8px 0;
-		border-radius: 18px;
+		color: $ink;
+		font-size: 17px;
+		font-weight: 800;
+		letter-spacing: -0.02em;
+		white-space: nowrap;
 		overflow: hidden;
-		isolation: isolate;
-		background:
-			radial-gradient(120% 140% at 100% 0%, rgba($oak, 0.9) 0%, rgba($oak, 0) 55%),
-			linear-gradient(120deg, $ink-dark 0%, $ink-2 100%);
-		&::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			z-index: 1;
-			background:
-				radial-gradient(90% 120% at 100% 0%, rgba($oak, 0.55) 0%, rgba($oak, 0) 60%),
-				linear-gradient(180deg, rgba(20, 20, 20, 0.15) 0%, rgba(20, 20, 20, 0.55) 100%);
-		}
-		.cover-photo {
-			position: absolute;
-			inset: 0;
-			background-size: cover;
-			background-position: center;
-			filter: blur(22px) saturate(1.25);
-			transform: scale(1.35);
-			transition: transform 0.6s ease;
-		}
-		.rank-badge {
-			position: absolute;
-			top: 12px;
-			left: 12px;
-			z-index: 2;
-			padding: 4px 10px;
-			border-radius: 999px;
-			font-size: 12px;
-			font-weight: 800;
-			letter-spacing: 0.02em;
-			color: $ink;
-			background: rgba(255, 255, 255, 0.92);
-			backdrop-filter: blur(6px);
-		}
+		text-overflow: ellipsis;
 	}
-
-	.store-top {
+	span {
 		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		padding: 0 20px;
-		margin-top: -44px;
-		position: relative;
-		z-index: 2;
-		.store-avatar .MuiAvatar-root {
-			width: 84px;
-			height: 84px;
-			border: 4px solid $white;
-			background: $soft;
-			box-shadow: 0 8px 20px rgba(20, 20, 20, 0.14);
-		}
-		.like-btn {
-			width: 40px;
-			height: 40px;
-			margin-bottom: 4px;
-			border-radius: 50%;
-			border: 1px solid $line;
-			background: $white;
-			color: $ink;
-			display: grid;
-			place-items: center;
-			cursor: pointer;
-			box-shadow: 0 4px 12px rgba(20, 20, 20, 0.08);
-			transition:
-				transform 0.15s ease,
-				color 0.15s ease;
-			&:hover {
-				transform: scale(1.08);
-				color: $sale;
-			}
-			&:active {
-				transform: scale(0.94);
-			}
-			&.liked {
-				color: $sale;
-				border-color: rgba($sale, 0.25);
-				background: rgba($sale, 0.06);
-			}
+		align-items: center;
+		gap: 3px;
+		color: $muted;
+		font-size: 12.5px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		svg {
+			font-size: 14px;
+			flex-shrink: 0;
 		}
 	}
+}
+.sf-follow {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	height: 34px;
+	padding: 0 14px 0 10px;
+	border: 1px solid $ink;
+	border-radius: 999px;
+	background: $ink;
+	color: $white;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease;
+	svg {
+		font-size: 17px;
+	}
+	&.on {
+		background: $white;
+		color: $ink;
+		border-color: $line;
+	}
+	&:disabled {
+		opacity: 0.6;
+	}
+}
 
-	.store-body {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		padding: 14px 20px 20px;
+.sf-desc {
+	color: $ink-2;
+	font-size: 14px;
+	line-height: 1.5;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	min-height: 42px;
+}
+
+/* the ledger: numbers in one line, the way a shop writes its sign */
+.sf-ledger {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding-top: 12px;
+	border-top: 1px dashed $line;
+	color: $muted;
+	font-size: 13px;
+	b {
+		color: $ink;
+		font-weight: 800;
 	}
-	.store-name {
+	.sf-visit {
+		margin-left: auto;
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
-		max-width: 100%;
+		gap: 2px;
 		color: $ink;
-		strong {
-			font-size: 20px;
-			font-weight: 800;
-			letter-spacing: -0.02em;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-		.arrow {
-			flex-shrink: 0;
-			font-size: 18px;
-			color: $muted;
-			opacity: 0.7;
-			transition:
-				transform 0.2s ease,
-				opacity 0.2s ease;
-		}
-		&:hover strong {
-			text-decoration: underline;
-			text-decoration-color: $ink;
-			text-underline-offset: 4px;
-		}
-	}
-	.store-nick {
-		font-size: 13px;
-		color: $faint;
-		margin-top: 2px;
-	}
-	.store-desc {
-		margin: 10px 0 0;
-		font-size: 14px;
-		line-height: 1.5;
-		color: $muted;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		min-height: 42px;
-	}
-	.store-chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-		margin-top: 14px;
-		span {
-			display: inline-flex;
-			align-items: center;
-			gap: 5px;
-			padding: 6px 11px;
-			border-radius: 999px;
-			background: $soft;
-			font-size: 12px;
-			font-weight: 600;
-			color: $ink-2;
-			max-width: 100%;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+		font-weight: 700;
 		svg {
 			font-size: 15px;
-			color: $muted;
+			transition: transform 0.2s ease;
 		}
 	}
-	.store-stats {
-		display: flex;
-		margin: 18px 0;
-		div {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			& + div {
-				border-left: 1px solid $line;
-			}
-		}
-		strong {
-			font-size: 20px;
-			font-weight: 800;
-			letter-spacing: -0.02em;
-			font-variant-numeric: tabular-nums;
-		}
-		span {
-			font-size: 12px;
-			color: $muted;
-		}
-	}
-	.store-actions {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 10px;
-		margin-top: auto;
-		a,
-		button {
-			height: 46px;
-			border-radius: 14px;
-			font: inherit;
-			font-size: 14px;
-			font-weight: 700;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 6px;
-			cursor: pointer;
-			transition:
-				background 0.2s ease,
-				color 0.2s ease,
-				border-color 0.2s ease;
-			svg {
-				font-size: 18px;
-			}
-		}
-		.btn-visit {
-			border: 1px solid $line;
-			background: $white;
-			color: $ink;
-			&:hover {
-				border-color: $ink;
-			}
-		}
-		.btn-follow {
-			border: 1px solid $ink;
-			background: $ink;
-			color: $white;
-			&:hover {
-				background: $oak;
-				border-color: $oak;
-			}
-			&:disabled {
-				opacity: 0.6;
-				cursor: wait;
-			}
-			.label-hover {
-				display: none;
-			}
-			&.following {
-				background: $soft;
-				border-color: $line;
-				color: $ink;
-				svg {
-					color: $ink;
-				}
-				&:hover {
-					background: rgba($sale, 0.08);
-					border-color: rgba($sale, 0.3);
-					color: $sale;
-					svg {
-						display: none;
-					}
-					.label {
-						display: none;
-					}
-					.label-hover {
-						display: inline;
-					}
-				}
-			}
-		}
-	}
-	/* Narrow columns (4-up home grid): stack the two buttons' text tighter. */
-	@include mobile {
-		.store-name strong {
-			font-size: 18px;
-		}
+	&:hover .sf-visit svg {
+		transform: translate(2px, -2px);
 	}
 }

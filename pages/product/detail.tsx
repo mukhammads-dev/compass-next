@@ -6,8 +6,6 @@ import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { Avatar, Button, CircularProgress, Stack } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import withLayoutFull from '../../libs/components/layout/LayoutFull';
 import FitCheck from '../../libs/components/product/FitCheck';
 import BuyBox from '../../libs/components/product/BuyBox';
@@ -15,6 +13,7 @@ import ProductCard from '../../libs/components/common/ProductCard';
 import RoomTourCard from '../../libs/components/common/RoomTourCard';
 import CommentSection from '../../libs/components/common/CommentSection';
 import NoData from '../../libs/components/common/NoData';
+import MediaActions from '../../libs/components/common/MediaActions';
 import { userVar } from '../../apollo/store';
 import { GET_PRODUCT, GET_PRODUCT_ROOM_TOURS, GET_SIMILAR_PRODUCTS } from '../../apollo/user/query';
 import { LIKE_TARGET_PRODUCT, UPDATE_PRODUCT } from '../../apollo/user/mutation';
@@ -27,8 +26,9 @@ import { ProductCondition, ProductStatus } from '../../libs/enums/product.enum';
 import { MemberType } from '../../libs/enums/member.enum';
 import { DEFAULT_AVATAR, DEFAULT_PRODUCT_IMAGE, imageUrl } from '../../libs/config';
 import { discountPercent, enumLabel, formatPrice } from '../../libs/utils';
-import { sweetConfirmAlert, sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetConfirmAlert, sweetMixinErrorAlert } from '../../libs/sweetAlert';
 import { T } from '../../libs/types/common';
+import { flipLike, settleLike } from '../../libs/like';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -80,14 +80,15 @@ const ProductDetail: NextPage = () => {
 	};
 
 	const likeProductHandler = async () => {
+		if (!product) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = product;
+		setProduct(flipLike(product, 'productLikes'));
 		try {
-			if (!productId) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetProduct({ variables: { input: productId } });
-			await reloadProduct();
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetProduct({ variables: { input: product._id } });
+			setProduct((current) => (current ? settleLike(current, 'productLikes', data?.likeTargetProduct) : current));
 		} catch (err: any) {
-			console.log('ERROR, likeProductHandler:', err.message);
+			setProduct(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};
@@ -144,6 +145,12 @@ const ProductDetail: NextPage = () => {
 								alt={product.productTitle}
 							/>
 							{product.productStatus === ProductStatus.SOLD && <span className={'badge sold'}>{t('Sold')}</span>}
+							<MediaActions
+								liked={liked}
+								likes={product.productLikes ?? 0}
+								onLike={likeProductHandler}
+								title={product.productTitle}
+							/>
 						</div>
 						{product.productImages?.length > 1 && (
 							<Stack className={'thumbs'}>
@@ -200,28 +207,18 @@ const ProductDetail: NextPage = () => {
 
 						<FitCheck productId={product._id} />
 
-						<Stack className={'actions'}>
-							<Button
-								variant={liked ? 'contained' : 'outlined'}
-								color={liked ? 'secondary' : 'primary'}
-								startIcon={liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-								onClick={likeProductHandler}
-							>
-								{product.productLikes}
-							</Button>
-							{isOwner ? (
-								<>
-									<Link href={{ pathname: '/mypage', query: { category: 'addProduct', productId: product._id } }}>
-										<Button variant={'outlined'}>{t('Edit')}</Button>
-									</Link>
-									{product.productStatus === ProductStatus.ACTIVE && (
-										<Button variant={'contained'} onClick={markSoldHandler}>
-											{t('Mark as sold')}
-										</Button>
-									)}
-								</>
-							) : null}
-						</Stack>
+						{isOwner && (
+							<Stack className={'actions'}>
+								<Link href={{ pathname: '/mypage', query: { category: 'addProduct', productId: product._id } }}>
+									<Button variant={'outlined'}>{t('Edit')}</Button>
+								</Link>
+								{product.productStatus === ProductStatus.ACTIVE && (
+									<Button variant={'contained'} onClick={markSoldHandler}>
+										{t('Mark as sold')}
+									</Button>
+								)}
+							</Stack>
+						)}
 
 						{!isOwner && <BuyBox product={product} />}
 

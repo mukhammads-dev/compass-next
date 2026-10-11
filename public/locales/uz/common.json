@@ -586,5 +586,18 @@
 	"Home": "Bosh sahifa",
 	"Photo": "Rasm",
 	"Me": "Men",
-	"Main": "Asosiy"
+	"Main": "Asosiy",
+	"spots every piece in a room photo and finds it in the shop.": "xona rasmidagi har bir buyumni topib, do'kondan ko'rsatadi.",
+	"Lamp": "Chiroq",
+	"AI search": "AI qidiruv",
+	"The window is being dressed": "Vitrina tayyorlanmoqda",
+	"pieces": "ta buyum",
+	"Added": "Qo'shildi",
+	"Unlike": "Yoqtirishni bekor qilish",
+	"Share": "Ulashish",
+	"Link copied": "Havola nusxalandi",
+	"Log in to continue": "Davom etish uchun kiring",
+	"Save pieces, follow stores and keep a cart with a free Compass account.": "Bepul Compass hisobi bilan buyumlarni saqlang, do'konlarga obuna bo'ling va savatdan foydalaning.",
+	"Not now": "Hozir emas",
+	"Yes, continue": "Ha, davom etish"
 }

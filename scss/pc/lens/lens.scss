@@ -457,3 +457,119 @@
 		transition: none;
 	}
 }
+
+/* ---------- AI entry on the home hero: make it obvious this is AI ---------- */
+@keyframes ai-sweep {
+	0% {
+		transform: translateX(-120%);
+	}
+	60%,
+	100% {
+		transform: translateX(420%);
+	}
+}
+@keyframes ai-tag {
+	0%,
+	100% {
+		opacity: 0.35;
+		transform: translateY(2px);
+	}
+	30%,
+	70% {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.ai-entry {
+	align-items: center;
+	gap: 14px 18px;
+}
+.lens-btn.ai {
+	position: relative;
+	overflow: hidden;
+	height: 56px;
+	padding: 0 8px 0 20px;
+	box-shadow:
+		0 0 0 1px rgba($oak, 0.55),
+		0 10px 28px rgba($oak, 0.28);
+	.ai-scan {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 34%;
+		background: linear-gradient(90deg, transparent, rgba($oak, 0.38), transparent);
+		animation: ai-sweep 2.8s ease-in-out infinite;
+		pointer-events: none;
+	}
+	.ai-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 3px;
+		height: 38px;
+		margin-left: 6px;
+		padding: 0 12px 0 9px;
+		border-radius: 999px;
+		background: $oak;
+		color: $white;
+		font-size: 13px;
+		font-weight: 800;
+		letter-spacing: 0.04em;
+		svg {
+			font-size: 16px;
+			color: $white;
+		}
+	}
+}
+.ai-caption {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-width: 360px;
+	p {
+		color: $muted;
+		font-size: 14px;
+		line-height: 1.45;
+	}
+	strong {
+		color: $ink;
+		font-weight: 800;
+	}
+	.ai-tags {
+		display: flex;
+		gap: 6px;
+		i {
+			padding: 3px 8px;
+			border: 1px dashed rgba($oak, 0.7);
+			border-radius: 6px;
+			color: darken($oak, 12%);
+			font-size: 11.5px;
+			font-style: normal;
+			font-weight: 700;
+			font-variant-numeric: tabular-nums;
+			animation: ai-tag 3s ease-in-out infinite;
+			&:nth-child(2) {
+				animation-delay: 0.4s;
+			}
+			&:nth-child(3) {
+				animation-delay: 0.8s;
+			}
+		}
+	}
+}
+@include mobile {
+	.lens-btn.ai {
+		height: 52px;
+		font-size: 15px;
+	}
+	.ai-caption .ai-tags {
+		display: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.lens-btn.ai .ai-scan,
+	.ai-caption .ai-tags i {
+		animation: none;
+	}
+}

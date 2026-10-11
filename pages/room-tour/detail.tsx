@@ -6,9 +6,7 @@ import moment from 'moment';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Avatar, Button, CircularProgress, Stack } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Avatar, CircularProgress, Stack } from '@mui/material';
 import withLayoutFull from '../../libs/components/layout/LayoutFull';
 import TaggedImage from '../../libs/components/room-tour/TaggedImage';
 import ProductCard from '../../libs/components/common/ProductCard';
@@ -22,8 +20,10 @@ import { CommentGroup } from '../../libs/enums/comment.enum';
 import { Message } from '../../libs/enums/common.enum';
 import { DEFAULT_AVATAR, imageUrl } from '../../libs/config';
 import { enumLabel } from '../../libs/utils';
-import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { sweetMixinErrorAlert } from '../../libs/sweetAlert';
 import { T } from '../../libs/types/common';
+import { flipLike, settleLike } from '../../libs/like';
+import MediaActions from '../../libs/components/common/MediaActions';
 
 export const getStaticProps = async ({ locale }: any) => ({
 	props: { ...(await serverSideTranslations(locale, ['common'])) },
@@ -54,14 +54,15 @@ const RoomTourDetail: NextPage = () => {
 	};
 
 	const likeArticleHandler = async () => {
+		if (!article) return;
+		if (!user._id) return sweetMixinErrorAlert(Message.NOT_AUTHENTICATED);
+		const before = article;
+		setArticle(flipLike(article, 'articleLikes'));
 		try {
-			if (!articleId) return;
-			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
-			await likeTargetBoardArticle({ variables: { input: articleId } });
-			await reloadArticle();
-			await sweetTopSmallSuccessAlert('success', 800);
+			const { data } = await likeTargetBoardArticle({ variables: { input: article._id } });
+			setArticle((current) => (current ? settleLike(current, 'articleLikes', data?.likeTargetBoardArticle) : current));
 		} catch (err: any) {
-			console.log('ERROR, likeArticleHandler:', err.message);
+			setArticle(before);
 			sweetMixinErrorAlert(err.message).then();
 		}
 	};
@@ -91,7 +92,15 @@ const RoomTourDetail: NextPage = () => {
 		<Stack id={'room-tour-detail-page'}>
 			<Stack className={'container detail-layout'}>
 				<Stack className={'detail-main'}>
-					<TaggedImage images={article.roomImages} tags={article.taggedProducts} products={taggedProducts} />
+					<div className={'media-frame'}>
+						<TaggedImage images={article.roomImages} tags={article.taggedProducts} products={taggedProducts} />
+						<MediaActions
+							liked={liked}
+							likes={article.articleLikes ?? 0}
+							onLike={likeArticleHandler}
+							title={article.articleTitle}
+						/>
+					</div>
 
 					<Stack className={'article-head'}>
 						<Stack className={'chips'}>
@@ -107,11 +116,7 @@ const RoomTourDetail: NextPage = () => {
 
 					<p className={'article-content'}>{article.articleContent}</p>
 
-					<CommentSection
-						commentGroup={CommentGroup.ARTICLE}
-						commentRefId={article._id}
-						onChange={reloadArticle}
-					/>
+					<CommentSection commentGroup={CommentGroup.ARTICLE} commentRefId={article._id} onChange={reloadArticle} />
 				</Stack>
 
 				<aside className={'detail-side'}>
@@ -124,16 +129,6 @@ const RoomTourDetail: NextPage = () => {
 							</span>
 						</Stack>
 					</Link>
-
-					<Button
-						fullWidth
-						variant={liked ? 'contained' : 'outlined'}
-						color={liked ? 'secondary' : 'primary'}
-						startIcon={liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-						onClick={likeArticleHandler}
-					>
-						{t('Like')} · {article.articleLikes}
-					</Button>
 
 					<Stack className={'tagged-list'}>
 						<h3>

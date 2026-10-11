@@ -28,7 +28,7 @@ const MobileTabBar = ({ cartCount }: { cartCount: number }) => {
 	const tabs = [
 		{ href: '/', label: 'Home', icon: <HomeOutlinedIcon />, active: path === '/' },
 		{ href: '/product', label: 'Shop', icon: <ChairOutlinedIcon />, active: path.startsWith('/product') },
-		{ href: '/lens', label: 'Photo', icon: <CenterFocusWeakRoundedIcon />, active: false, lens: true },
+		{ href: '/lens', label: 'AI search', icon: <CenterFocusWeakRoundedIcon />, active: path === '/lens', lens: true },
 		{
 			href: user._id ? '/cart' : '/account/join',
 			label: 'Cart',
