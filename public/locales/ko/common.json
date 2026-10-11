@@ -599,5 +599,7 @@
 	"Log in to continue": "로그인이 필요해요",
 	"Save pieces, follow stores and keep a cart with a free Compass account.": "무료 Compass 계정으로 찜하고, 스토어를 팔로우하고, 장바구니를 이용하세요.",
 	"Not now": "나중에",
-	"Yes, continue": "네, 계속할게요"
+	"Yes, continue": "네, 계속할게요",
+	"Prices are in won. Did you mean ₩{{amount}}?": "가격은 원 단위예요. ₩{{amount}}을(를) 입력하려던 건가요?",
+	"Prices are in won: enter 30000 for ₩30,000.": "가격은 원 단위로 입력해 주세요: ₩30,000은 30000이에요."
 }

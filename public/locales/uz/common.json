@@ -599,5 +599,7 @@
 	"Log in to continue": "Davom etish uchun kiring",
 	"Save pieces, follow stores and keep a cart with a free Compass account.": "Bepul Compass hisobi bilan buyumlarni saqlang, do'konlarga obuna bo'ling va savatdan foydalaning.",
 	"Not now": "Hozir emas",
-	"Yes, continue": "Ha, davom etish"
+	"Yes, continue": "Ha, davom etish",
+	"Prices are in won. Did you mean ₩{{amount}}?": "Narx vonda. ₩{{amount}} demoqchimisiz?",
+	"Prices are in won: enter 30000 for ₩30,000.": "Narxni vonda kiriting: ₩30,000 uchun 30000 yozing."
 }

@@ -599,5 +599,7 @@
 	"Log in to continue": "Log in to continue",
 	"Save pieces, follow stores and keep a cart with a free Compass account.": "Save pieces, follow stores and keep a cart with a free Compass account.",
 	"Not now": "Not now",
-	"Yes, continue": "Yes, continue"
+	"Yes, continue": "Yes, continue",
+	"Prices are in won. Did you mean ₩{{amount}}?": "Prices are in won. Did you mean ₩{{amount}}?",
+	"Prices are in won: enter 30000 for ₩30,000.": "Prices are in won: enter 30000 for ₩30,000."
 }

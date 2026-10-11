@@ -31,6 +31,7 @@ import {
 	productStyles,
 	productTypes,
 	validImageTypes,
+	MIN_PRODUCT_PRICE,
 } from '../../config';
 import { enumLabel } from '../../utils';
 import { sweetMixinErrorAlert, sweetMixinSuccessAlert } from '../../sweetAlert';
@@ -184,6 +185,10 @@ const AddProduct = () => {
 	const saveProductHandler = async () => {
 		try {
 			if (!validate()) throw new Error(Message.INSERT_ALL_INPUTS);
+			const prices = [insertData.productPrice, insertData.productSalePrice].filter((value) => Number(value) > 0);
+			if (prices.some((value) => Number(value) < MIN_PRODUCT_PRICE)) {
+				throw new Error(t('Prices are in won: enter 30000 for ₩30,000.') as string);
+			}
 			const input: ProductInput = {
 				...insertData,
 				productCondition: agent ? insertData.productCondition : ProductCondition.USED,
@@ -224,6 +229,8 @@ const AddProduct = () => {
 	const number = (key: NumberKey, label: string) => {
 		const digits = numberText[key];
 		const money = MONEY_KEYS.includes(key);
+		/* "48" for a ₩48,000 lamp is the usual slip: say so while typing */
+		const tooLow = key !== 'productDeliveryFee' && money && Number(digits) > 0 && Number(digits) < MIN_PRODUCT_PRICE;
 		return (
 			<TextField
 				/* text, not number: no spinner arrows, no scroll-wheel edits, and it can be cleared */
@@ -234,6 +241,12 @@ const AddProduct = () => {
 				onBlur={() => setFocusedNumber(null)}
 				fullWidth
 				inputProps={{ inputMode: 'numeric', autoComplete: 'off' }}
+				error={tooLow}
+				helperText={
+					tooLow
+						? t('Prices are in won. Did you mean ₩{{amount}}?', { amount: groupDigits(`${digits}000`) })
+						: undefined
+				}
 			/>
 		);
 	};
