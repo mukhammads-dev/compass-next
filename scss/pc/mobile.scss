@@ -117,6 +117,15 @@ $tabbar-h: 64px;
 	}
 	.live-chat {
 		bottom: calc(#{$tabbar-h} + 14px + env(safe-area-inset-bottom));
+		/* open chat: the panel has its own close button, so the round launcher steps aside
+		   and the panel sits just above the tab bar (it used to cover the send button) */
+		&.is-open .chat-launcher {
+			display: none;
+		}
+		.chat-panel {
+			bottom: calc(#{$tabbar-h} + 8px + env(safe-area-inset-bottom));
+			height: min(72vh, calc(100dvh - #{$tabbar-h} - 96px));
+		}
 	}
 
 	/* ---------- footer: one short block ---------- */

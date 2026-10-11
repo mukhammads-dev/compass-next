@@ -127,7 +127,7 @@ const Chat = () => {
 		status === 'open' ? t('{{count}} online', { count: online }) : status === 'idle' ? t('Offline') : t('Connecting…');
 
 	return (
-		<div className={'live-chat'}>
+		<div className={`live-chat ${open ? 'is-open' : ''}`}>
 			{open && (
 				<section
 					className={'chat-panel'}
