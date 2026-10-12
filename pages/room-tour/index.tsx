@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -57,16 +57,20 @@ const RoomTourList: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
 
-	const { loading } = useQuery(GET_BOARD_ARTICLES, {
-		fetchPolicy: 'network-only',
+	const { loading, data: queryData } = useQuery(GET_BOARD_ARTICLES, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input },
 		skip: !ready,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setRoomTours(data?.getBoardArticles?.list ?? []);
-			setTotal(data?.getBoardArticles?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		setRoomTours(data?.getBoardArticles?.list ?? []);
+		setTotal(data?.getBoardArticles?.metaCounter?.[0]?.total ?? 0);
+	}, [queryData]);
 
 	/** HANDLERS **/
 	const likeArticleHandler = async (user: T, id: string) => {

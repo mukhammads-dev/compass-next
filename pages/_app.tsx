@@ -7,6 +7,7 @@ import { appWithTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useApollo } from '../apollo/client';
 import Chat from '../libs/components/Chat';
+import RouteProgress from '../libs/components/common/RouteProgress';
 import useChatSocket from '../libs/hooks/useChatSocket';
 import { light } from '../scss/MaterialTheme';
 import '../scss/app.scss';
@@ -22,6 +23,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 		<ApolloProvider client={client}>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
+				<RouteProgress />
 				<Component {...pageProps} />
 				{/* live chat floats over every page except the admin panel and the login screen */}
 				{!router.pathname.startsWith('/_admin') && router.pathname !== '/account/join' && <Chat />}

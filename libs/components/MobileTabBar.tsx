@@ -38,6 +38,7 @@ const MobileTabBar = ({ cartCount }: { cartCount: number }) => {
 				</Badge>
 			),
 			active: path === '/cart',
+			hasItems: cartCount > 0,
 		},
 		{
 			href: user._id ? '/mypage' : '/account/join',
@@ -53,7 +54,7 @@ const MobileTabBar = ({ cartCount }: { cartCount: number }) => {
 				<Link
 					key={tab.label}
 					href={tab.href}
-					className={`${tab.active ? 'active' : ''} ${tab.lens ? 'lens' : ''}`}
+					className={`${tab.active ? 'active' : ''} ${tab.lens ? 'lens' : ''} ${'hasItems' in tab && tab.hasItems ? 'has-items' : ''}`}
 					aria-current={tab.active ? 'page' : undefined}
 				>
 					<span className={'icon'}>{tab.icon}</span>

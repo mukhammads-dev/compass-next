@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useMutation, useReactiveVar } from '@apollo/client';
+import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { CircularProgress } from '@mui/material';
@@ -11,6 +11,7 @@ import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import { userVar } from '../../../apollo/store';
 import { ADD_TO_CART } from '../../../apollo/user/mutation';
+import { GET_MY_CART } from '../../../apollo/user/query';
 import { Product } from '../../types/product/product';
 import { ProductCondition, ProductStatus } from '../../enums/product.enum';
 import { MemberType } from '../../enums/member.enum';
@@ -36,7 +37,10 @@ const BuyBox = ({ product }: BuyBoxProps) => {
 	/** the button itself says "Added" for a moment instead of a popup; the cart badge counts up too */
 	const [added, setAdded] = useState<boolean>(false);
 
-	const [addToCart] = useMutation(ADD_TO_CART, { refetchQueries: ['GetMyCart'] });
+	const [addToCart] = useMutation(ADD_TO_CART, { refetchQueries: ['GetMyCart'], awaitRefetchQueries: true });
+	/* same query as the header badge, read from the cache: knows if this piece is already in the cart */
+	const { data: cartData } = useQuery(GET_MY_CART, { skip: !user._id, fetchPolicy: 'cache-first' });
+	const inCart = (cartData?.getMyCart ?? []).find((line: { productId: string }) => line.productId === product._id);
 
 	const seller = product.memberData;
 	const sellerName = seller?.memberNick ?? '';
@@ -154,22 +158,30 @@ const BuyBox = ({ product }: BuyBoxProps) => {
 						<AddRoundedIcon />
 					</button>
 				</div>
-				<button
-					type={'button'}
-					className={`buy-secondary ${added ? 'added' : ''}`}
-					disabled={Boolean(busy)}
-					onClick={() => addHandler('stay')}
-				>
-					{busy === 'cart' ? (
-						<CircularProgress size={18} color={'inherit'} />
-					) : added ? (
-						<>
-							<CheckRoundedIcon fontSize={'small'} /> {t('Added')}
-						</>
-					) : (
-						t('Add to cart')
-					)}
-				</button>
+				{inCart && !added ? (
+					<Link href={'/cart'} className={'buy-secondary in-cart'}>
+						<CheckRoundedIcon fontSize={'small'} />
+						{t('In your cart')}
+						<span className={'qty'}>×{inCart.quantity}</span>
+					</Link>
+				) : (
+					<button
+						type={'button'}
+						className={`buy-secondary ${added ? 'added' : ''}`}
+						disabled={Boolean(busy)}
+						onClick={() => addHandler('stay')}
+					>
+						{busy === 'cart' ? (
+							<CircularProgress size={18} color={'inherit'} />
+						) : added ? (
+							<>
+								<CheckRoundedIcon fontSize={'small'} /> {t('Added')}
+							</>
+						) : (
+							t('Add to cart')
+						)}
+					</button>
+				)}
 				<button
 					type={'button'}
 					className={'buy-primary'}

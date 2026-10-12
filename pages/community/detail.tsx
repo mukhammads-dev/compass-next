@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
@@ -38,21 +38,29 @@ const CommunityDetail: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
 
-	const { loading, refetch: getArticleRefetch } = useQuery(GET_BOARD_ARTICLE, {
-		fetchPolicy: 'network-only',
+	const {
+		loading,
+		refetch: getArticleRefetch,
+		data: queryData,
+	} = useQuery(GET_BOARD_ARTICLE, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: articleId },
 		skip: !articleId,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			const result: BoardArticle | null = data?.getBoardArticle ?? null;
-			// Room Tours have their own viewer with product pins
-			if (result?.articleCategory === BoardArticleCategory.ROOM_TOUR) {
-				router.replace({ pathname: '/room-tour/detail', query: { id: result._id } }).then();
-				return;
-			}
-			setArticle(result);
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		const result: BoardArticle | null = data?.getBoardArticle ?? null;
+		// Room Tours have their own viewer with product pins
+		if (result?.articleCategory === BoardArticleCategory.ROOM_TOUR) {
+			router.replace({ pathname: '/room-tour/detail', query: { id: result._id } }).then();
+			return;
+		}
+		setArticle(result);
+	}, [queryData, router]);
 
 	/** HANDLERS **/
 	const reloadArticle = async () => {

@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
@@ -39,13 +39,23 @@ const RoomTourDetail: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
 
-	const { loading, refetch: getArticleRefetch } = useQuery(GET_BOARD_ARTICLE, {
-		fetchPolicy: 'network-only',
+	const {
+		loading,
+		refetch: getArticleRefetch,
+		data: queryData,
+	} = useQuery(GET_BOARD_ARTICLE, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: articleId },
 		skip: !articleId,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => setArticle(data?.getBoardArticle ?? null),
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		setArticle(data?.getBoardArticle ?? null);
+	}, [queryData]);
 
 	/** HANDLERS **/
 	const reloadArticle = async () => {

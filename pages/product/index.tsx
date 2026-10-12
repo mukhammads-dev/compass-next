@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -51,16 +51,20 @@ const ProductList: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-	const { loading } = useQuery(GET_PRODUCTS, {
-		fetchPolicy: 'network-only',
+	const { loading, data: queryData } = useQuery(GET_PRODUCTS, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: searchFilter },
 		skip: !ready,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setProducts(data?.getProducts?.list ?? []);
-			setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		setProducts(data?.getProducts?.list ?? []);
+		setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
+	}, [queryData]);
 
 	/** HANDLERS **/
 	const likeProductHandler = async (user: T, id: string) => {

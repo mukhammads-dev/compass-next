@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import moment from 'moment';
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
@@ -38,8 +38,7 @@ const Community: NextPage = () => {
 	const router = useRouter();
 	const { t } = useTranslation('common');
 	const user = useReactiveVar(userVar);
-	const category =
-		CATEGORIES.find((item) => item.value === router.query.category)?.value ?? BoardArticleCategory.QNA;
+	const category = CATEGORIES.find((item) => item.value === router.query.category)?.value ?? BoardArticleCategory.QNA;
 	const page = Math.max(1, parseInt((router.query.page as string) ?? '1', 10) || 1);
 	const [articles, setArticles] = useState<BoardArticle[]>([]);
 	const [total, setTotal] = useState<number>(0);
@@ -53,16 +52,20 @@ const Community: NextPage = () => {
 	};
 
 	/** APOLLO REQUESTS **/
-	const { loading } = useQuery(GET_BOARD_ARTICLES, {
-		fetchPolicy: 'network-only',
+	const { loading, data: queryData } = useQuery(GET_BOARD_ARTICLES, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: articleInquiry },
 		skip: !router.isReady,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setArticles(data?.getBoardArticles?.list ?? []);
-			setTotal(data?.getBoardArticles?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		setArticles(data?.getBoardArticles?.list ?? []);
+		setTotal(data?.getBoardArticles?.metaCounter?.[0]?.total ?? 0);
+	}, [queryData]);
 
 	/** HANDLERS **/
 	const changeCategoryHandler = async (_: unknown, value: BoardArticleCategory) => {

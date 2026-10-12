@@ -601,5 +601,10 @@
 	"Not now": "나중에",
 	"Yes, continue": "네, 계속할게요",
 	"Prices are in won. Did you mean ₩{{amount}}?": "가격은 원 단위예요. ₩{{amount}}을(를) 입력하려던 건가요?",
-	"Prices are in won: enter 30000 for ₩30,000.": "가격은 원 단위로 입력해 주세요: ₩30,000은 30000이에요."
+	"Prices are in won: enter 30000 for ₩30,000.": "가격은 원 단위로 입력해 주세요: ₩30,000은 30000이에요.",
+	"Furniture & home marketplace": "가구·홈 마켓플레이스",
+	"See it in a real home.": "실제 집에서 보고,",
+	"Make it yours.": "내 집에 들이세요.",
+	"New furniture from Korean stores and pre-loved pieces from neighbours, each shown in a real room. Tap a dot to shop it.": "국내 가구 스토어의 새 상품과 이웃의 중고 가구를 실제 집 사진으로 만나보세요. 점을 누르면 바로 구매할 수 있어요.",
+	"In your cart": "장바구니에 있음"
 }

@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -48,16 +48,26 @@ const ProductDetail: NextPage = () => {
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 	const [updateProduct] = useMutation<unknown, { input: ProductUpdate }>(UPDATE_PRODUCT);
 
-	const { loading, refetch: getProductRefetch } = useQuery(GET_PRODUCT, {
-		fetchPolicy: 'network-only',
+	const {
+		loading,
+		refetch: getProductRefetch,
+		data: queryData,
+	} = useQuery(GET_PRODUCT, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: productId },
 		skip: !productId,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setProduct(data?.getProduct ?? null);
-			setActiveImage(0);
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		setProduct(data?.getProduct ?? null);
+	}, [queryData]);
+
+	/* a new product opens on its first photo; a like or a refetch keeps the photo you were on */
+	useEffect(() => setActiveImage(0), [productId]);
 
 	useQuery(GET_PRODUCT_ROOM_TOURS, {
 		fetchPolicy: 'cache-and-network',

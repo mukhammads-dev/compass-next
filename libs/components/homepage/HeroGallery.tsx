@@ -116,10 +116,18 @@ const HeroGallery = () => {
 	return (
 		<Stack className={`header-main ${dragging ? 'is-dragging' : ''}`} {...dropProps}>
 			<Stack className={'container hero-head'}>
+				<span className={'hero-eyebrow'}>{t('Furniture & home marketplace')}</span>
 				<h1>
-					<span>{t('Fall for a room.')}</span>
-					<span>{t('Take its furniture home.')}</span>
+					<span>{t('See it in a real home.')}</span>
+					<span>
+						<em>{t('Make it yours.')}</em>
+					</span>
 				</h1>
+				<p className={'hero-lead'}>
+					{t(
+						'New furniture from Korean stores and pre-loved pieces from neighbours, each shown in a real room. Tap a dot to shop it.',
+					)}
+				</p>
 				<div className={'lens-entry ai-entry'}>
 					<button type={'button'} className={'lens-btn ai'} onClick={open}>
 						<span className={'ai-scan'} aria-hidden />
@@ -130,16 +138,6 @@ const HeroGallery = () => {
 							AI
 						</span>
 					</button>
-					<div className={'ai-caption'}>
-						<p>
-							<strong>Compass AI</strong> {t('spots every piece in a room photo and finds it in the shop.')}
-						</p>
-						<span className={'ai-tags'} aria-hidden>
-							<i>{t('Sofa')} 96%</i>
-							<i>{t('Lamp')} 91%</i>
-							<i>{t('Rug')} 88%</i>
-						</span>
-					</div>
 					<input {...inputProps} />
 				</div>
 			</Stack>

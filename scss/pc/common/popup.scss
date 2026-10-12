@@ -252,3 +252,129 @@
 	border-color: $ink !important;
 	gap: 6px;
 }
+
+/* ---------- page change: thin oak line at the top ---------- */
+@keyframes route-grow {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(0.85);
+	}
+}
+.route-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 2000;
+	height: 3px;
+	background: $oak;
+	transform-origin: left;
+	box-shadow: 0 0 10px rgba($oak, 0.6);
+	pointer-events: none;
+	&.loading {
+		animation: route-grow 2.4s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+	}
+	&.done {
+		transform: scaleX(1);
+		opacity: 0;
+		transition:
+			transform 0.2s ease,
+			opacity 0.3s ease 0.15s;
+	}
+}
+
+/* ---------- header cart: a bag that lights up while it holds something ---------- */
+@keyframes cart-bump {
+	0% {
+		transform: scale(1);
+	}
+	30% {
+		transform: scale(1.18) rotate(-8deg);
+	}
+	60% {
+		transform: scale(0.96) rotate(4deg);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+@keyframes cart-ring {
+	from {
+		box-shadow: 0 0 0 0 rgba($oak, 0.45);
+	}
+	to {
+		box-shadow: 0 0 0 12px rgba($oak, 0);
+	}
+}
+.cart-lamp {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 40px;
+	min-width: 40px;
+	padding: 0 10px;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: $ink;
+	font: inherit;
+	cursor: pointer;
+	transition:
+		background 0.2s ease,
+		color 0.2s ease,
+		padding 0.2s ease;
+	svg {
+		font-size: 20px;
+	}
+	&:hover {
+		background: $soft;
+	}
+	/* holding pieces: an ink pill with the count in oak, readable from across the page */
+	&.lit {
+		padding: 0 12px 0 10px;
+		background: $ink;
+		color: $white;
+		svg {
+			color: $oak;
+		}
+		&:hover {
+			background: $ink-dark;
+		}
+	}
+	&.bump {
+		animation: cart-ring 0.7s ease-out;
+		svg {
+			animation: cart-bump 0.6s ease;
+		}
+	}
+	.cart-count {
+		font-size: 13px;
+		font-weight: 800;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
+	}
+}
+
+/* buy box: once a piece is in the cart, the button says so and leads there */
+.buy-secondary.in-cart {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	border-color: $oak !important;
+	color: darken($oak, 12%) !important;
+	background: $oak-soft !important;
+	.qty {
+		opacity: 0.7;
+		font-weight: 600;
+	}
+}
+
+/* phone tab bar: the cart tab glows the same way */
+.m-tabbar a.has-items .icon {
+	color: $oak;
+}

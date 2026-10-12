@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -44,17 +44,25 @@ const MemberPage: NextPage = () => {
 	const [subscribe] = useMutation(SUBSCRIBE);
 	const [unsubscribe] = useMutation(UNSUBSCRIBE);
 
-	const { loading, refetch: getMemberRefetch } = useQuery(GET_MEMBER, {
-		fetchPolicy: 'network-only',
+	const {
+		loading,
+		refetch: getMemberRefetch,
+		data: queryData,
+	} = useQuery(GET_MEMBER, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: memberId },
 		skip: !memberId,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			const result: Member | null = data?.getMember ?? null;
-			setMember(result);
-			if (result && result.memberType !== MemberType.AGENT && result.memberProducts === 0) setTab('roomTours');
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		const result: Member | null = data?.getMember ?? null;
+		setMember(result);
+		if (result && result.memberType !== MemberType.AGENT && result.memberProducts === 0) setTab('roomTours');
+	}, [queryData]);
 
 	useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',

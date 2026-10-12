@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -37,16 +37,20 @@ const StoreList: NextPage = () => {
 	const [text, setText] = useState<string>('');
 
 	/** APOLLO REQUESTS **/
-	const { loading } = useQuery(GET_AGENTS, {
-		fetchPolicy: 'network-only',
+	const { loading, data: queryData } = useQuery(GET_AGENTS, {
+		fetchPolicy: 'cache-and-network',
 		variables: { input: searchFilter },
 		skip: !ready,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setStores(data?.getAgents?.list ?? []);
-			setTotal(data?.getAgents?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+
+	/** cached results show at once on a revisit, fresh ones replace them a moment later */
+	useEffect(() => {
+		const data: T = queryData;
+		if (!data) return;
+		setStores(data?.getAgents?.list ?? []);
+		setTotal(data?.getAgents?.metaCounter?.[0]?.total ?? 0);
+	}, [queryData]);
 
 	/** HANDLERS **/
 	const searchHandler = async () => {

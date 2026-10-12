@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FormEvent, MouseEvent, useEffect, useState } from 'react';
+import { FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
-import { Avatar, Badge, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import { Avatar, IconButton, Menu, MenuItem, Stack } from '@mui/material';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -28,6 +29,18 @@ const Top = () => {
 	/** the cart badge; mutations that change the cart refetch this query by name ("GetMyCart") */
 	const { data: cartData } = useQuery(GET_MY_CART, { skip: !user._id, fetchPolicy: 'cache-and-network' });
 	const cartCount: number = user._id ? (cartData?.getMyCart?.length ?? 0) : 0;
+	/* the bag lights up while it holds something, and gives a little bump each time a piece goes in */
+	const [cartBump, setCartBump] = useState<boolean>(false);
+	const lastCount = useRef<number>(cartCount);
+	useEffect(() => {
+		if (cartCount > lastCount.current) {
+			setCartBump(true);
+			const timer = window.setTimeout(() => setCartBump(false), 700);
+			lastCount.current = cartCount;
+			return () => window.clearTimeout(timer);
+		}
+		lastCount.current = cartCount;
+	}, [cartCount]);
 	const [searchText, setSearchText] = useState<string>('');
 	const [scrolled, setScrolled] = useState<boolean>(false);
 	const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
@@ -129,11 +142,15 @@ const Top = () => {
 								>
 									<FavoriteBorderIcon fontSize={'small'} />
 								</IconButton>
-								<IconButton aria-label={t('Cart') as string} onClick={() => router.push('/cart')}>
-									<Badge badgeContent={cartCount} className={'cart-badge'} max={99}>
-										<ShoppingBagOutlinedIcon fontSize={'small'} />
-									</Badge>
-								</IconButton>
+								<button
+									type={'button'}
+									className={`cart-lamp ${cartCount > 0 ? 'lit' : ''} ${cartBump ? 'bump' : ''}`}
+									aria-label={`${t('Cart')}${cartCount ? ` (${cartCount})` : ''}`}
+									onClick={() => router.push('/cart')}
+								>
+									{cartCount > 0 ? <ShoppingBagRoundedIcon /> : <ShoppingBagOutlinedIcon />}
+									{cartCount > 0 && <span className={'cart-count'}>{cartCount > 99 ? '99+' : cartCount}</span>}
+								</button>
 								<IconButton
 									aria-label={'notifications'}
 									onClick={() => router.push({ pathname: '/mypage', query: { category: 'notifications' } })}

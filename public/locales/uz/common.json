@@ -601,5 +601,10 @@
 	"Not now": "Hozir emas",
 	"Yes, continue": "Ha, davom etish",
 	"Prices are in won. Did you mean ₩{{amount}}?": "Narx vonda. ₩{{amount}} demoqchimisiz?",
-	"Prices are in won: enter 30000 for ₩30,000.": "Narxni vonda kiriting: ₩30,000 uchun 30000 yozing."
+	"Prices are in won: enter 30000 for ₩30,000.": "Narxni vonda kiriting: ₩30,000 uchun 30000 yozing.",
+	"Furniture & home marketplace": "Mebel va uy jihozlari bozori",
+	"See it in a real home.": "Haqiqiy uyda ko'ring.",
+	"Make it yours.": "O'zingizniki qiling.",
+	"New furniture from Korean stores and pre-loved pieces from neighbours, each shown in a real room. Tap a dot to shop it.": "Koreya do'konlaridan yangi mebel va qo'shnilardan ishlatilgan buyumlar — har biri haqiqiy xonada. Sotib olish uchun nuqtani bosing.",
+	"In your cart": "Savatda bor"
 }

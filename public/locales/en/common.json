@@ -601,5 +601,10 @@
 	"Not now": "Not now",
 	"Yes, continue": "Yes, continue",
 	"Prices are in won. Did you mean ₩{{amount}}?": "Prices are in won. Did you mean ₩{{amount}}?",
-	"Prices are in won: enter 30000 for ₩30,000.": "Prices are in won: enter 30000 for ₩30,000."
+	"Prices are in won: enter 30000 for ₩30,000.": "Prices are in won: enter 30000 for ₩30,000.",
+	"Furniture & home marketplace": "Furniture & home marketplace",
+	"See it in a real home.": "See it in a real home.",
+	"Make it yours.": "Make it yours.",
+	"New furniture from Korean stores and pre-loved pieces from neighbours, each shown in a real room. Tap a dot to shop it.": "New furniture from Korean stores and pre-loved pieces from neighbours, each shown in a real room. Tap a dot to shop it.",
+	"In your cart": "In your cart"
 }
