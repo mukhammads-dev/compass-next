@@ -6,7 +6,6 @@ import { useTranslation } from 'next-i18next';
 import { Avatar, IconButton, Menu, MenuItem, Stack } from '@mui/material';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
-import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -148,7 +147,7 @@ const Top = () => {
 									aria-label={`${t('Cart')}${cartCount ? ` (${cartCount})` : ''}`}
 									onClick={() => router.push('/cart')}
 								>
-									{cartCount > 0 ? <ShoppingBagRoundedIcon /> : <ShoppingBagOutlinedIcon />}
+									<ShoppingBagOutlinedIcon />
 									{cartCount > 0 && <span className={'cart-count'}>{cartCount > 99 ? '99+' : cartCount}</span>}
 								</button>
 								<IconButton

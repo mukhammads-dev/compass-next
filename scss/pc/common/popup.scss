@@ -285,13 +285,13 @@
 	}
 }
 
-/* ---------- header cart: a bag that lights up while it holds something ---------- */
+/* ---------- header cart: same quiet icon as its neighbours, an oak tag counts the pieces ---------- */
 @keyframes cart-bump {
 	0% {
 		transform: scale(1);
 	}
 	30% {
-		transform: scale(1.18) rotate(-8deg);
+		transform: scale(1.15) rotate(-8deg);
 	}
 	60% {
 		transform: scale(0.96) rotate(4deg);
@@ -300,62 +300,63 @@
 		transform: scale(1);
 	}
 }
-@keyframes cart-ring {
-	from {
-		box-shadow: 0 0 0 0 rgba($oak, 0.45);
+@keyframes cart-tag-pop {
+	0% {
+		transform: scale(0.4);
 	}
-	to {
-		box-shadow: 0 0 0 12px rgba($oak, 0);
+	60% {
+		transform: scale(1.2);
+	}
+	100% {
+		transform: scale(1);
 	}
 }
 .cart-lamp {
 	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
+	display: inline-grid;
+	place-items: center;
+	width: 40px;
 	height: 40px;
-	min-width: 40px;
-	padding: 0 10px;
+	padding: 0;
 	border: 0;
-	border-radius: 999px;
+	border-radius: 50%;
 	background: transparent;
 	color: $ink;
-	font: inherit;
 	cursor: pointer;
-	transition:
-		background 0.2s ease,
-		color 0.2s ease,
-		padding 0.2s ease;
+	transition: background 0.2s ease;
 	svg {
 		font-size: 20px;
 	}
 	&:hover {
 		background: $soft;
 	}
-	/* holding pieces: an ink pill with the count in oak, readable from across the page */
-	&.lit {
-		padding: 0 12px 0 10px;
-		background: $ink;
-		color: $white;
-		svg {
-			color: $oak;
-		}
-		&:hover {
-			background: $ink-dark;
-		}
-	}
-	&.bump {
-		animation: cart-ring 0.7s ease-out;
-		svg {
-			animation: cart-bump 0.6s ease;
-		}
-	}
+	/* the count hangs off the bag like a little price tag */
 	.cart-count {
-		font-size: 13px;
+		position: absolute;
+		top: 1px;
+		right: -5px;
+		min-width: 17px;
+		height: 17px;
+		padding: 0 4px;
+		display: grid;
+		place-items: center;
+		border-radius: 6px 9px 9px 9px;
+		background: $oak;
+		color: $white;
+		box-shadow: 0 0 0 2px $white;
+		font-family: $font;
+		font-size: 10px;
 		font-weight: 800;
 		font-variant-numeric: tabular-nums;
 		line-height: 1;
+	}
+	&.bump {
+		svg {
+			animation: cart-bump 0.6s ease;
+		}
+		.cart-count {
+			animation: cart-tag-pop 0.45s ease;
+		}
 	}
 }
 
