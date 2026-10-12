@@ -37,7 +37,11 @@ const StoreList: NextPage = () => {
 	const [text, setText] = useState<string>('');
 
 	/** APOLLO REQUESTS **/
-	const { loading, data: queryData } = useQuery(GET_AGENTS, {
+	const {
+		loading,
+		data: queryData,
+		error: queryError,
+	} = useQuery(GET_AGENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: searchFilter },
 		skip: !ready,
@@ -103,7 +107,7 @@ const StoreList: NextPage = () => {
 					</div>
 				</div>
 
-				{loading && !stores.length ? (
+				{(loading || (!queryData && !queryError)) && !stores.length ? (
 					<Stack className={'loading-box'}>
 						<CircularProgress />
 					</Stack>

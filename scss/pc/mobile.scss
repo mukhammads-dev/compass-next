@@ -284,6 +284,34 @@ $tabbar-h: 64px;
 			font-size: 11px;
 		}
 	}
+	/* room tour filters: each group is one swipeable row instead of wrapping into five */
+	.room-tour-filter .chip-list {
+		flex-wrap: nowrap !important;
+		overflow-x: auto;
+		margin: 0 -16px;
+		padding: 0 16px 2px;
+		scrollbar-width: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		.chip {
+			flex-shrink: 0;
+			white-space: nowrap;
+		}
+	}
+	/* room tours: count on its own line, sort + "Share my room" side by side below it */
+	#room-tour-list-page .list-toolbar {
+		flex-wrap: wrap;
+		.toolbar-right {
+			width: 100%;
+			justify-content: space-between;
+			gap: 8px;
+		}
+		.MuiButton-root {
+			white-space: nowrap;
+			border-radius: 999px;
+		}
+	}
 	#product-list-page .grid.grid-3 {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 20px 10px;

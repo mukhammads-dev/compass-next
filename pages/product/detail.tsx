@@ -52,6 +52,7 @@ const ProductDetail: NextPage = () => {
 		loading,
 		refetch: getProductRefetch,
 		data: queryData,
+		error: queryError,
 	} = useQuery(GET_PRODUCT, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: productId },
@@ -115,7 +116,7 @@ const ProductDetail: NextPage = () => {
 		}
 	};
 
-	if (loading && !product) {
+	if ((loading || (!queryData && !queryError)) && !product) {
 		return (
 			<Stack className={'loading-box full'}>
 				<CircularProgress />

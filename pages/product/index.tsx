@@ -51,7 +51,11 @@ const ProductList: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-	const { loading, data: queryData } = useQuery(GET_PRODUCTS, {
+	const {
+		loading,
+		data: queryData,
+		error: queryError,
+	} = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: searchFilter },
 		skip: !ready,
@@ -143,7 +147,7 @@ const ProductList: NextPage = () => {
 						</Select>
 					</Stack>
 
-					{loading && !products.length ? (
+					{(loading || (!queryData && !queryError)) && !products.length ? (
 						<Stack className={'loading-box'}>
 							<CircularProgress />
 						</Stack>

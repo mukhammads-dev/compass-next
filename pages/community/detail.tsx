@@ -42,6 +42,7 @@ const CommunityDetail: NextPage = () => {
 		loading,
 		refetch: getArticleRefetch,
 		data: queryData,
+		error: queryError,
 	} = useQuery(GET_BOARD_ARTICLE, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: articleId },
@@ -82,7 +83,7 @@ const CommunityDetail: NextPage = () => {
 		}
 	};
 
-	if (loading && !article) {
+	if ((loading || (!queryData && !queryError)) && !article) {
 		return (
 			<Stack className={'loading-box full'}>
 				<CircularProgress />

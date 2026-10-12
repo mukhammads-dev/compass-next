@@ -52,7 +52,11 @@ const Community: NextPage = () => {
 	};
 
 	/** APOLLO REQUESTS **/
-	const { loading, data: queryData } = useQuery(GET_BOARD_ARTICLES, {
+	const {
+		loading,
+		data: queryData,
+		error: queryError,
+	} = useQuery(GET_BOARD_ARTICLES, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: articleInquiry },
 		skip: !router.isReady,
@@ -94,7 +98,7 @@ const Community: NextPage = () => {
 					)}
 				</Stack>
 
-				{loading && !articles.length ? (
+				{(loading || (!queryData && !queryError)) && !articles.length ? (
 					<Stack className={'loading-box'}>
 						<CircularProgress />
 					</Stack>

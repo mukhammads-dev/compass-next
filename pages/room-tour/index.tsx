@@ -57,7 +57,11 @@ const RoomTourList: NextPage = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
 
-	const { loading, data: queryData } = useQuery(GET_BOARD_ARTICLES, {
+	const {
+		loading,
+		data: queryData,
+		error: queryError,
+	} = useQuery(GET_BOARD_ARTICLES, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input },
 		skip: !ready,
@@ -129,7 +133,7 @@ const RoomTourList: NextPage = () => {
 					</Stack>
 				</Stack>
 
-				{loading && !roomTours.length ? (
+				{(loading || (!queryData && !queryError)) && !roomTours.length ? (
 					<Stack className={'loading-box'}>
 						<CircularProgress />
 					</Stack>

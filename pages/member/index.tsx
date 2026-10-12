@@ -48,6 +48,7 @@ const MemberPage: NextPage = () => {
 		loading,
 		refetch: getMemberRefetch,
 		data: queryData,
+		error: queryError,
 	} = useQuery(GET_MEMBER, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: memberId },
@@ -109,7 +110,7 @@ const MemberPage: NextPage = () => {
 		}
 	};
 
-	if (loading && !member) {
+	if ((loading || (!queryData && !queryError)) && !member) {
 		return (
 			<Stack className={'loading-box full'}>
 				<CircularProgress />
