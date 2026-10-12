@@ -58,11 +58,17 @@ const Filter = (props: FilterProps) => {
 	const [myRooms, setMyRooms] = useState<MyRoom[]>([]);
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_MY_ROOMS, {
+	const { data: queryResult } = useQuery(GET_MY_ROOMS, {
 		skip: !user._id,
 		fetchPolicy: 'cache-and-network',
-		onCompleted: (data: T) => setMyRooms(data?.getMyRooms ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setMyRooms(data?.getMyRooms ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	/** LIFECYCLES **/
 	useEffect(() => {
@@ -136,12 +142,7 @@ const Filter = (props: FilterProps) => {
 				</strong>
 				<span className={'hint'}>{t('Only show products smaller than (cm)')}</span>
 				{myRooms.length > 0 && (
-					<Select
-						size={'small'}
-						displayEmpty
-						value={''}
-						onChange={(e) => applyMyRoomHandler(e.target.value as string)}
-					>
+					<Select size={'small'} displayEmpty value={''} onChange={(e) => applyMyRoomHandler(e.target.value as string)}>
 						<MenuItem value={''} disabled>
 							{t('Use one of my rooms')}
 						</MenuItem>

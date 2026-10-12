@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
@@ -29,11 +29,17 @@ const PreLoved = () => {
 	const [products, setProducts] = useState<Product[]>([]);
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_PRODUCTS, {
+	const { data: queryResult } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: inquiry },
-		onCompleted: (data: T) => setProducts(data?.getProducts?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setProducts(data?.getProducts?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	const allHref = { pathname: '/product', query: { input: JSON.stringify({ ...inquiry, limit: 12 }) } };
 

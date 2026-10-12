@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
@@ -57,11 +57,17 @@ const HeroGallery = () => {
 	const { open, dragging, dropProps, inputProps } = usePhotoPicker(lensHandler);
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_BOARD_ARTICLES, {
+	const { data: queryResult } = useQuery(GET_BOARD_ARTICLES, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: initialInput },
-		onCompleted: (data: T) => setRoomTours(data?.getBoardArticles?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setRoomTours(data?.getBoardArticles?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	const realSlides: Slide[] = roomTours
 		.filter((article) => article.roomImages?.length)

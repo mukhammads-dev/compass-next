@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
@@ -60,12 +60,18 @@ const ProductTabs = () => {
 	/** APOLLO REQUESTS **/
 	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-	const { loading } = useQuery(GET_PRODUCTS, {
+	const { loading, data: queryResult } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: active.inquiry },
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => setProducts(data?.getProducts?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setProducts(data?.getProducts?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	/** HANDLERS **/
 	const likeProductHandler = async (user: T, id: string) => {

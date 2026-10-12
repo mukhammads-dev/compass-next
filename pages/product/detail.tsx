@@ -70,19 +70,31 @@ const ProductDetail: NextPage = () => {
 	/* a new product opens on its first photo; a like or a refetch keeps the photo you were on */
 	useEffect(() => setActiveImage(0), [productId]);
 
-	useQuery(GET_PRODUCT_ROOM_TOURS, {
+	const { data: queryResult } = useQuery(GET_PRODUCT_ROOM_TOURS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: { productId, page: 1, limit: 3 } },
 		skip: !productId,
-		onCompleted: (data: T) => setRoomTours(data?.getProductRoomTours?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setRoomTours(data?.getProductRoomTours?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
-	useQuery(GET_SIMILAR_PRODUCTS, {
+	const { data: queryResult2 } = useQuery(GET_SIMILAR_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: productId },
 		skip: !productId,
-		onCompleted: (data: T) => setSimilarProducts(data?.getSimilarProducts ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult2;
+		if (!data) return;
+		setSimilarProducts(data?.getSimilarProducts ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult2]);
 
 	/** HANDLERS **/
 	const reloadProduct = async () => {

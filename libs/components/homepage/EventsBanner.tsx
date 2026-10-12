@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
@@ -25,11 +25,17 @@ const EventsBanner = () => {
 	const [events, setEvents] = useState<Notice[]>([]);
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_NOTICES, {
+	const { data: queryResult } = useQuery(GET_NOTICES, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: initialInput },
-		onCompleted: (data: T) => setEvents(data?.getNotices?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setEvents(data?.getNotices?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	if (!events.length) return null;
 

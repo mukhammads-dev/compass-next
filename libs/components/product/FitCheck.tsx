@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLazyQuery, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Button, CircularProgress, MenuItem, Select, Stack } from '@mui/material';
@@ -25,15 +25,20 @@ const FitCheck = ({ productId }: FitCheckProps) => {
 	const [fit, setFit] = useState<ProductFit | null>(null);
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_MY_ROOMS, {
+	const { data: queryResult } = useQuery(GET_MY_ROOMS, {
 		skip: !user._id,
 		fetchPolicy: 'cache-and-network',
-		onCompleted: (data: T) => {
-			const rooms: MyRoom[] = data?.getMyRooms ?? [];
-			setMyRooms(rooms);
-			if (rooms.length && !myRoomId) setMyRoomId(rooms[0]._id);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		const rooms: MyRoom[] = data?.getMyRooms ?? [];
+		setMyRooms(rooms);
+		if (rooms.length && !myRoomId) setMyRoomId(rooms[0]._id);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	const [checkProductFit, { loading }] = useLazyQuery(CHECK_PRODUCT_FIT, { fetchPolicy: 'network-only' });
 

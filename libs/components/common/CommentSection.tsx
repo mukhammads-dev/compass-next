@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import moment from 'moment';
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
@@ -41,16 +41,21 @@ const CommentSection = (props: CommentSectionProps) => {
 	const [createComment] = useMutation(CREATE_COMMENT);
 	const [updateComment] = useMutation(UPDATE_COMMENT);
 
-	const { refetch: getCommentsRefetch } = useQuery(GET_COMMENTS, {
+	const { refetch: getCommentsRefetch, data: queryResult } = useQuery(GET_COMMENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: commentInquiry },
 		skip: !commentRefId,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setComments(data?.getComments?.list ?? []);
-			setCommentTotal(data?.getComments?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setComments(data?.getComments?.list ?? []);
+		setCommentTotal(data?.getComments?.metaCounter?.[0]?.total ?? 0);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	/** HANDLERS **/
 	const refresh = async (page: number = commentInquiry.page) => {

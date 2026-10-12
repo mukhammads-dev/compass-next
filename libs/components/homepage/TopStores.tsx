@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
@@ -18,11 +18,17 @@ const TopStores = () => {
 	const [stores, setStores] = useState<Member[]>([]);
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_AGENTS, {
+	const { data: queryResult } = useQuery(GET_AGENTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: initialInput },
-		onCompleted: (data: T) => setStores(data?.getAgents?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setStores(data?.getAgents?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	if (!stores.length) return null;
 

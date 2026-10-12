@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
@@ -36,15 +36,20 @@ const CategoryCircle = ({ type }: { type: string }) => {
 	};
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_PRODUCTS, {
+	const { data: queryResult } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: inquiry },
-		onCompleted: (data: T) => {
-			const top = data?.getProducts?.list?.[0];
-			if (top?.productImages?.[0]) setPhoto(imageUrl(top.productImages[0], photo));
-			setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		const top = data?.getProducts?.list?.[0];
+		if (top?.productImages?.[0]) setPhoto(imageUrl(top.productImages[0], photo));
+		setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	return (
 		<Link href={listHref(type)} className={'cat-circle'}>

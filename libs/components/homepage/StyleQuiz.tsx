@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
 import { Stack } from '@mui/material';
@@ -34,16 +34,21 @@ const StyleQuiz = () => {
 	};
 
 	/** APOLLO REQUESTS **/
-	const { loading } = useQuery(GET_PRODUCTS, {
+	const { loading, data: queryResult } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: inquiry },
 		skip: picks.length === 0,
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setProducts(data?.getProducts?.list ?? []);
-			setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setProducts(data?.getProducts?.list ?? []);
+		setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	/** HANDLERS **/
 	const togglePick = (style: ProductStyle) => {

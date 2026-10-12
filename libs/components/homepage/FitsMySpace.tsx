@@ -68,15 +68,20 @@ const FitsMySpace = () => {
 	};
 
 	/** APOLLO REQUESTS **/
-	const { loading } = useQuery(GET_PRODUCTS, {
+	const { loading, data: queryResult } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: inquiry },
 		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: T) => {
-			setProducts(data?.getProducts?.list ?? []);
-			setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setProducts(data?.getProducts?.list ?? []);
+		setTotal(data?.getProducts?.metaCounter?.[0]?.total ?? 0);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	const shopHref = {
 		pathname: '/product',

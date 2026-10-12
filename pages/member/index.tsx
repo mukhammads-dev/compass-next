@@ -65,16 +65,22 @@ const MemberPage: NextPage = () => {
 		if (result && result.memberType !== MemberType.AGENT && result.memberProducts === 0) setTab('roomTours');
 	}, [queryData]);
 
-	useQuery(GET_PRODUCTS, {
+	const { data: queryResult } = useQuery(GET_PRODUCTS, {
 		fetchPolicy: 'cache-and-network',
 		variables: {
 			input: { page: 1, limit: 24, sort: 'createdAt', direction: Direction.DESC, search: { memberId } },
 		},
 		skip: !memberId || tab !== 'products',
-		onCompleted: (data: T) => setProducts(data?.getProducts?.list ?? []),
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setProducts(data?.getProducts?.list ?? []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
-	useQuery(GET_BOARD_ARTICLES, {
+	const { data: queryResult2 } = useQuery(GET_BOARD_ARTICLES, {
 		fetchPolicy: 'cache-and-network',
 		variables: {
 			input: {
@@ -86,13 +92,18 @@ const MemberPage: NextPage = () => {
 			},
 		},
 		skip: !memberId || tab === 'products',
-		onCompleted: (data: T) => {
-			const list: BoardArticle[] = data?.getBoardArticles?.list ?? [];
-			setArticles(
-				tab === 'posts' ? list.filter((item) => item.articleCategory !== BoardArticleCategory.ROOM_TOUR) : list,
-			);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult2;
+		if (!data) return;
+		const list: BoardArticle[] = data?.getBoardArticles?.list ?? [];
+		setArticles(
+			tab === 'posts' ? list.filter((item) => item.articleCategory !== BoardArticleCategory.ROOM_TOUR) : list,
+		);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult2]);
 
 	/** HANDLERS **/
 	const followHandler = async () => {

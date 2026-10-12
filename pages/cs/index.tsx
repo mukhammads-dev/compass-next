@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect } from 'react';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { useTranslation } from 'next-i18next';
@@ -44,15 +44,20 @@ const CustomerCenter: NextPage = () => {
 	};
 
 	/** APOLLO REQUESTS **/
-	useQuery(GET_NOTICES, {
+	const { data: queryResult } = useQuery(GET_NOTICES, {
 		fetchPolicy: 'cache-and-network',
 		variables: { input: noticeInquiry },
 		skip: !router.isReady,
-		onCompleted: (data: T) => {
-			setNotices(data?.getNotices?.list ?? []);
-			setTotal(data?.getNotices?.metaCounter?.[0]?.total ?? 0);
-		},
 	});
+	/* read the result on every change, cache hits included (onCompleted skips those) */
+	useEffect(() => {
+		const data: T = queryResult;
+		if (!data) return;
+		setNotices(data?.getNotices?.list ?? []);
+		setTotal(data?.getNotices?.metaCounter?.[0]?.total ?? 0);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [queryResult]);
 
 	/** HANDLERS **/
 	const changeTabHandler = async (_: unknown, value: NoticeCategory) => {
@@ -82,7 +87,7 @@ const CustomerCenter: NextPage = () => {
 											{tab === NoticeCategory.EVENT && notice.eventStartAt
 												? `${moment(notice.eventStartAt).format('YYYY.MM.DD')} ~ ${
 														notice.eventEndAt ? moment(notice.eventEndAt).format('YYYY.MM.DD') : ''
-												  }`
+													}`
 												: moment(notice.createdAt).format('YYYY.MM.DD')}
 										</span>
 									</Stack>
