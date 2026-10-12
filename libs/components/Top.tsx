@@ -139,7 +139,7 @@ const Top = () => {
 									aria-label={'favorites'}
 									onClick={() => router.push({ pathname: '/mypage', query: { category: 'myFavorites' } })}
 								>
-									<FavoriteBorderIcon fontSize={'small'} />
+									<FavoriteBorderIcon />
 								</IconButton>
 								<button
 									type={'button'}
@@ -154,7 +154,7 @@ const Top = () => {
 									aria-label={'notifications'}
 									onClick={() => router.push({ pathname: '/mypage', query: { category: 'notifications' } })}
 								>
-									<NotificationsNoneIcon fontSize={'small'} />
+									<NotificationsNoneIcon />
 								</IconButton>
 								<IconButton
 									className={'avatar-btn'}
