@@ -5,7 +5,7 @@ import { getJwtToken } from './auth/token';
 import { REACT_APP_API_GRAPHQL_URL } from './config';
 import { LensResult } from './types/lens/lens';
 
-type UploadTarget = 'member' | 'product' | 'article' | 'my-room';
+type UploadTarget = 'member' | 'product' | 'community' | 'my-room';
 
 /**
  * Posts a GraphQL multipart request and returns its `data`.
