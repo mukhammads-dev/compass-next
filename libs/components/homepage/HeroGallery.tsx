@@ -118,9 +118,7 @@ const HeroGallery = () => {
 			<Stack className={'container hero-head'}>
 				<h1>
 					<span>{t('See it in a real home.')}</span>
-					<span>
-						<em>{t('Make it yours.')}</em>
-					</span>
+					<span>{t('Make it yours.')}</span>
 				</h1>
 				<div className={'lens-entry ai-entry'}>
 					<button type={'button'} className={'lens-btn ai'} onClick={open}>
