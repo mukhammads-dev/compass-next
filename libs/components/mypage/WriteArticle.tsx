@@ -120,7 +120,7 @@ const WriteArticle = () => {
 			const room = MAX_ROOM_TOUR_IMAGES - roomImages.length;
 			if (room <= 0) throw new Error(`${t('Maximum images')}: ${MAX_ROOM_TOUR_IMAGES}`);
 			setUploading(true);
-			const paths = await uploadImages(files.slice(0, room), 'community');
+			const paths = await uploadImages(files.slice(0, room), 'article');
 			setField('roomImages', [...roomImages, ...paths]);
 		} catch (err: any) {
 			console.log('ERROR, uploadRoomImagesHandler:', err.message);
@@ -136,7 +136,7 @@ const WriteArticle = () => {
 			const file = e.target.files?.[0];
 			if (!file) return;
 			setUploading(true);
-			setField('articleImage', await uploadImage(file, 'community'));
+			setField('articleImage', await uploadImage(file, 'article'));
 		} catch (err: any) {
 			console.log('ERROR, uploadArticleImageHandler:', err.message);
 			sweetMixinErrorAlert(err.message).then();
