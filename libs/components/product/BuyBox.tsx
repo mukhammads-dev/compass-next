@@ -121,8 +121,8 @@ const BuyBox = ({ product }: BuyBoxProps) => {
 	return (
 		<div className={'buy-box'}>
 			<div className={'buy-stock'}>
-				{product.productStock <= 3 ? (
-					<strong className={'low'}>{t('Only {{count}} left', { count: product.productStock })}</strong>
+				{(product.productStock ?? 1) <= 3 ? (
+					<strong className={'low'}>{t('Only {{count}} left', { count: product.productStock ?? 1 })}</strong>
 				) : (
 					<strong>{t('In stock')}</strong>
 				)}
